@@ -2,6 +2,9 @@
 #include <Windows.h>
 #include "wil/resource.h"
 #include <optional>
+#include <string>
+#include "Throwables.h"
+
 
 class Window
 {
