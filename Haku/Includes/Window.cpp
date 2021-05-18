@@ -39,6 +39,7 @@ Window::Window()
     {
         throw WINAPI_LAST_THROW();
     }
+    GFX = std::make_unique<Graphics>(Handle.get());
     SetWindowLongPtrA(Handle.get(), GWLP_USERDATA, (LONG_PTR)this);
 }
 /*Returns Loopp Control Variable*/
@@ -59,26 +60,16 @@ bool Window::HandleMessages() noexcept
     }
 }
 
+Graphics& Window::Gfx() noexcept
+{
+    return *GFX;
+}
+
 LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
 {
     LRESULT Ret{};
     switch (message)
     {
-    case WM_PAINT:
-    {
-        PAINTSTRUCT PaintStruct;
-        BeginPaint(handle, &PaintStruct);
-        RECT ClientRect{};
-        GetClientRect(handle, &ClientRect);
-        HGDIOBJ OriginalObject{ 0 };
-        OriginalObject = SelectObject(PaintStruct.hdc, GetStockObject(DC_PEN));
-        HPEN BlackPen = CreatePen(PS_SOLID, 4, 0);
-        Rectangle(PaintStruct.hdc, ClientRect.left + 100, ClientRect.top + 100, ClientRect.right - 100, ClientRect.bottom - 100);
-
-        DeleteObject(BlackPen);
-        SelectObject(PaintStruct.hdc, OriginalObject);
-        EndPaint(handle, &PaintStruct);
-    }break;
     case WM_CLOSE:
     {
         if (MessageBox(handle, "Really quit?", "Haku-Chan here..!", MB_OKCANCEL) == IDOK)
