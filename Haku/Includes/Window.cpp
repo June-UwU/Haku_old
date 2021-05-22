@@ -46,11 +46,11 @@ Window::Window()
 /*Figure out a way to cleanly return exit code..*/
 bool Window::HandleMessages() noexcept
 {
-
     MSG msg = { };
-    while (GetMessage(&msg, NULL, 0, 0))
+    while (true)
     {
-        if (msg.message == WM_DESTROY)
+        PeekMessage(&msg, NULL, 0, 0, PM_REMOVE);//peek message has a return of bool thats goes false after no messages
+        if (msg.message == WM_QUIT)
         {
             return false ;
         }
