@@ -1,7 +1,15 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Build",
+    "\\Build\\Haku",
+    "\\Build\\Haku\\Debug",
+    "\\Haku",
+    "\\Haku\\Includes",
+    "\\Haku\\Shaders",
+    "\\out",
+    "\\Third-Party Libs"
   ],
-  "SelectedNode": "\\Haku.sln",
+  "SelectedNode": "\\Haku\\Shaders\\PixelShader.hlsl",
   "PreviewInSolutionExplorer": false
 }

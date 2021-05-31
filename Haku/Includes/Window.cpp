@@ -1,10 +1,6 @@
 #include "Window.h"
 #include <filesystem>
-
-
-/*MACROS FOR SHINENGANS*/
-#define WINAPI_LAST_THROW() Throwables(__LINE__,__FILE__,__func__,GetLastError())
-
+#include "ExceptionMacros.h"
 
 Window::Window()
 {
@@ -37,7 +33,7 @@ Window::Window()
         nullptr,nullptr,GetModuleHandle(nullptr),this));
     if (!Handle)
     {
-        throw WINAPI_LAST_THROW();
+        throw EXCEPT_LAST_THROW();
     }
     GFX = std::make_unique<Graphics>(Handle.get());
     SetWindowLongPtrA(Handle.get(), GWLP_USERDATA, (LONG_PTR)this);

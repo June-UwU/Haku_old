@@ -8,6 +8,7 @@ void Application::Run()
 		//this is equivalent to wiping the board clean
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 
+		AppWindow.Gfx().Tinkering();
 		//Present the Created frame
 		AppWindow.Gfx().PresentSwapChainBuffer();
 	}
