@@ -1,5 +1,6 @@
 #include "Application.h"
-
+#include <string>
+//iterations is too fast for now have to ad
 void Application::Run()
 {
 	while (AppWindow.HandleMessages())
@@ -8,7 +9,7 @@ void Application::Run()
 		//this is equivalent to wiping the board clean
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 
-		AppWindow.Gfx().Tinkering();
+		AppWindow.Gfx().Tinkering(90.0f);
 		//Present the Created frame
 		AppWindow.Gfx().PresentSwapChainBuffer();
 	}

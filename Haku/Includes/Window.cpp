@@ -6,16 +6,13 @@ Window::Window()
 {
     // Register the window class.
     const char CLASS_NAME[] = "Haku Window Class";
-    int argc;
-    LPWSTR* CommandLine = CommandLineToArgvW(GetCommandLineW(), &argc);
-    HakuIcon.reset(nullptr);
-    if (CommandLine)
-    {
-        std::filesystem::path ExecutablePath{ CommandLine[0] };
-        auto IconPath = ExecutablePath.parent_path()/"../Haku.ico";
-        HakuIcon.reset(reinterpret_cast<HICON>(LoadImage(nullptr, IconPath.string().data(), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE)));
-        LocalFree(CommandLine);
-    }
+    char Filepath[256];
+    GetModuleFileName(nullptr, Filepath, std::size(Filepath));
+
+    std::filesystem::path ExecutablePath(Filepath);
+    auto IconPath = ExecutablePath.parent_path()/"../Haku.ico";
+    HakuIcon.reset(reinterpret_cast<HICON>(LoadImage(nullptr, IconPath.string().data(), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_LOADFROMFILE)));
+         
     WNDCLASS wc = { };
     wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
     wc.lpfnWndProc = Adapter;

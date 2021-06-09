@@ -71,25 +71,43 @@ void Graphics::PresentSwapChainBuffer()
 	EXCEPT_HR_THROW(Code)
 }
 
-void Graphics::Tinkering()
+void Graphics::Tinkering(float ThetaZ)
 {
 	char FilePath[256];
-	GetModuleFileNameA(nullptr, FilePath, 256);
+	GetModuleFileNameA(nullptr, FilePath, std::size(FilePath));
 	std::filesystem::path Exe(FilePath);
 	Exe.remove_filename();
 	std::filesystem::path VertexShaderPath(Exe / "../../Shaders/VertexShader.hlsl");
 	std::filesystem::path PixelShaderPath(Exe / "../../Shaders/PixelShader.hlsl");
 
+	Microsoft::WRL::ComPtr<ID3DBlob> ErrorBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob> VertexBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob> PixelBlob;
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader;
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> PixelShader;
+	Microsoft::WRL::ComPtr< ID3D11Buffer> RotationMatrix;
 
 	HRESULT hr{};
+
+
+	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
+	//done a preprosser conditional to avoid runtime check ... might need if we support costom shaders
+#if defined( DEBUG ) || defined( _DEBUG )
+	flags |= D3DCOMPILE_DEBUG;
+#endif
+
 	hr = D3DCompileFromFile(VertexShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", 
-		NULL, NULL, VertexBlob.GetAddressOf(), nullptr);
+		flags, NULL, VertexBlob.GetAddressOf(), ErrorBlob.GetAddressOf());
+	if (!SUCCEEDED(hr))
+	{
+		OutputDebugStringA((char*)ErrorBlob->GetBufferPointer());
+	}
 	hr = D3DCompileFromFile(PixelShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
-		NULL, NULL, PixelBlob.GetAddressOf(), nullptr);
+		flags, NULL, PixelBlob.GetAddressOf(), ErrorBlob.GetAddressOf());
+	if (!SUCCEEDED(hr))
+	{
+		OutputDebugStringA((char*)ErrorBlob->GetBufferPointer());
+	}
 
 	hr = Device->CreateVertexShader(VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf());
 	hr = Device->CreatePixelShader(PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf());
@@ -98,17 +116,48 @@ void Graphics::Tinkering()
 	DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
 	VertexShader.Reset();
 	Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> IndexBuffer;
+
+	//investigate the XMFLOAT4X4 thing and meshing of that bullshit with XMMATRIX
+	struct Rotation
+	{
+		DirectX::XMMATRIX RotationZ;
+	};
+
+	Rotation Matrix{ DirectX::XMMatrixRotationZ(ThetaZ) };//list initialization works...!!!or does it..!
+
+	D3D11_BUFFER_DESC ConstantBuffer{};
+	ConstantBuffer.ByteWidth = sizeof(Matrix);
+	ConstantBuffer.Usage = D3D11_USAGE_DYNAMIC;
+	ConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	ConstantBuffer.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	
+	D3D11_SUBRESOURCE_DATA ConstantSubResource{};
+	ConstantSubResource.pSysMem = &Matrix;
+	
+	hr = Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf());
+	DeviceContext->VSSetConstantBuffers(0u, 1u, RotationMatrix.GetAddressOf());
 
 	struct Vertex
 	{
-		DirectX::XMFLOAT4 VertexData;
+		struct 
+		{
+			float x;
+			float y;
+		}pos;
+		struct
+		{
+			float Red;
+			float Blue;
+			float Green;
+		}RGB;
 	};
-
 	Vertex Vertices[]
 	{
-		DirectX::XMFLOAT4{0.0f,0.5f,0.0f,1.0f},
-		DirectX::XMFLOAT4{0.5f,-0.5f,0.0f,1.0f},
-		DirectX::XMFLOAT4{-0.5f,-0.5f,0.0f,1.0f}
+		{-0.5f,0.5f,1.0f,0.0f,0.0f},
+		{0.5f,0.5f,0.0f,1.0f,0.0f},
+		{0.5f,-0.5f,0.0f,0.0f,1.0f},
+		{-0.5f,-0.5f,1.0f,0.0f,1.0f}
 	};
 
 	D3D11_BUFFER_DESC VertexDesc{};
@@ -122,16 +171,33 @@ void Graphics::Tinkering()
 	D3D11_SUBRESOURCE_DATA VertexSubRes{};
 	VertexSubRes.pSysMem = Vertices;
 
+	unsigned int Index[]{ 0,1,2,
+						  0,2,3};
+
+	D3D11_BUFFER_DESC IndexBufferDesc{};
+	IndexBufferDesc.ByteWidth = sizeof(Index) * std::size(Index);
+	IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	IndexBufferDesc.CPUAccessFlags = 0;
+	IndexBufferDesc.MiscFlags = 0;
+	
+	D3D11_SUBRESOURCE_DATA IndexSubRes{0};
+	IndexSubRes.pSysMem = Index;
+
+	hr = Device->CreateBuffer(&IndexBufferDesc, &IndexSubRes, IndexBuffer.GetAddressOf());
 	hr = Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf());
-	UINT stride = sizeof(DirectX::XMFLOAT4);
+	UINT stride = sizeof(Vertex);
 	UINT OffSet = 0u;
 	DeviceContext->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &stride, &OffSet);
-	Microsoft::WRL::ComPtr< ID3D11InputLayout> InputLayout;
+	DeviceContext->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout;
 	D3D11_INPUT_ELEMENT_DESC VertexInputDesc[]{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,
-		  D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,
+		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR",0,DXGI_FORMAT_R32G32B32_FLOAT,0,sizeof(float)*2,
+		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	hr = Device->CreateInputLayout(VertexInputDesc, 1, VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf());
+	hr = Device->CreateInputLayout(VertexInputDesc, std::size(VertexInputDesc), VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf());
 	DeviceContext->IASetInputLayout(InputLayout.Get());
 
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -146,5 +212,6 @@ void Graphics::Tinkering()
 	vp.TopLeftY = 0;
 	DeviceContext->RSSetViewports(1, &vp);
 
-	DeviceContext->Draw(std::size(Vertices), 0);
+	
+	DeviceContext->DrawIndexed(std::size(Index), 0, 0);
 }

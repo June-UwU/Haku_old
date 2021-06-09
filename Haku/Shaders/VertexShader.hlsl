@@ -1,5 +1,15 @@
-float4 main(float4 position :POSITION) : SV_POSITION
+struct VertexData
 {
-    float4 ret = pos;
-    return ret;
+	float4 pos : POSITION;
+	float4 color : COLOR;
+};
+struct ColorData
+{
+	float4 RGBA;
+};
+
+ColorData main(VertexData Data)
+{
+	ColorData Color = Data.color;
+	return Color;
 }

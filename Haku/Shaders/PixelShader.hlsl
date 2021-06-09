@@ -1,4 +1,4 @@
-float4 main() :SV_Color
+float4 main(ColorData Data) : SV_Target
 {
-	return float4(1.0f,0.0f,0.0f,0.0f);
+	 return Data.RGBA;
 }

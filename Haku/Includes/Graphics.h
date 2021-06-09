@@ -13,7 +13,7 @@ public:
 	Graphics(HWND handle);
 	void ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept;
 	void PresentSwapChainBuffer();
-	void Tinkering();
+	void Tinkering(float ThetaZ);
 private:
 	float ClientHeight;
 	float ClientWidth;
