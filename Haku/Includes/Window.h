@@ -7,7 +7,6 @@
 #include <memory>
 #include "Graphics.h"
 
-
 class Window
 {
 public:

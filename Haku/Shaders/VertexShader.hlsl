@@ -1,15 +1,23 @@
 struct VertexData
 {
-	float4 pos : POSITION;
-	float4 color : COLOR;
+	float2 pos : POSITION;
+	float3 color : COLOR;
 };
 struct ColorData
 {
-	float4 RGBA;
+	float4 RGBA : COLOR;
+	float4 pos : SV_POSITION;
+};
+
+cbuffer Rotation
+{
+	row_major matrix RotationZ;
 };
 
 ColorData main(VertexData Data)
 {
-	ColorData Color = Data.color;
+	ColorData Color;
+	Color.pos = mul(float4(Data.pos, 0.0f, 1.0f), RotationZ);
+	Color.RGBA = float4(Data.color,1.0f);
 	return Color;
 }

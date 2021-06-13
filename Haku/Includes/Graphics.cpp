@@ -10,9 +10,9 @@
 #pragma comment(lib ,"d3dCompiler.lib")
 
 
-
 Graphics::Graphics(HWND Handle)
 {
+	//next issue::refresh rate and resolutions
 	//Note:: Should Look into enumerating display and graphics adapter
 	HRESULT Code;
 	RECT ThrowAway;
@@ -42,8 +42,10 @@ Graphics::Graphics(HWND Handle)
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	SwapChainDesc.Flags = 0;
 
-	constexpr bool DEBUG_MODE = _DEBUG;
-	UINT flags = DEBUG_MODE ? D3D11_CREATE_DEVICE_DEBUG : 0;
+	UINT flags = 0;
+#ifdef _DEBUG
+	 flags = D3D11_CREATE_DEVICE_DEBUG ;
+#endif 
 	Code = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE,
 		NULL, flags, FeatureLevel, 1,
 		D3D11_SDK_VERSION, &SwapChainDesc, &SwapChain, &Device, NULL, &DeviceContext);
@@ -124,7 +126,8 @@ void Graphics::Tinkering(float ThetaZ)
 		DirectX::XMMATRIX RotationZ;
 	};
 
-	Rotation Matrix{ DirectX::XMMatrixRotationZ(ThetaZ) };//list initialization works...!!!or does it..!
+	//yeah rotations are really fcked
+	Rotation Matrix{ DirectX::XMMatrixRotationY(ThetaZ) };//list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
 	ConstantBuffer.ByteWidth = sizeof(Matrix);

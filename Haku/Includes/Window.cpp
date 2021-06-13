@@ -1,6 +1,7 @@
 #include "Window.h"
 #include <filesystem>
 #include "ExceptionMacros.h"
+#include "HakuLog.h"
 
 Window::Window()
 {
@@ -28,6 +29,15 @@ Window::Window()
     Handle.reset(CreateWindowExA(NULL,
         CLASS_NAME,"Haku",WS_MAXIMIZE|WS_OVERLAPPEDWINDOW|WS_VISIBLE,0,0,1280,720,
         nullptr,nullptr,GetModuleHandle(nullptr),this));
+    HAKU_CONSOLE_INIT;
+    HAKU_LOG_INIT;
+    /*should set a pattern...?*/
+    
+    HAKU_LOG_INFO("info");
+    HAKU_LOG_WARN("warn");
+    HAKU_LOG_CRIT("crit");
+    HAKU_LOG_ERR("error");
+    
     if (!Handle)
     {
         throw EXCEPT_LAST_THROW();

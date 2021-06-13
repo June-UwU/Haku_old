@@ -14,6 +14,7 @@ add_executable(${PROJECT_NAME}
 	 ${INCLUDES}
 	 )
 
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Third-Party Libs/spdlog/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Third-Party Libs/wil/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Includes")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Shaders")
