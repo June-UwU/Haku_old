@@ -6,27 +6,44 @@ static std::shared_ptr<spdlog::logger> DebugLogger = nullptr;
 void Init_Logger()
 {
 	WindowSink = std::make_shared<spdlog::sinks::wincolor_stderr_sink_st>(spdlog::color_mode::automatic);
-	DebugLogger = std::make_shared<spdlog::logger>("LOG", WindowSink);
+	DebugLogger = std::make_shared<spdlog::logger>("Haku", WindowSink);
 }
 
-void log_info(std::string msg)
+
+void log_out_info(const std::string msg)
 {
-	DebugLogger->log(spdlog::level::level_enum::info, msg);
+	DebugLogger->info(msg);
 }
 
-void log_warn(std::string msg)
+void log_out_warn(const std::string msg)
 {
-	DebugLogger->log(spdlog::level::level_enum::warn, msg);
+	DebugLogger->warn(msg);
 }
 
-void log_crit(std::string msg)
+void log_out_crit(const std::string msg)
 {
-	DebugLogger->log(spdlog::level::level_enum::critical, msg);
+	DebugLogger->critical(msg);
 }
 
-void log_err(std::string msg)
+void log_out_err(const std::string msg)
 {
-	DebugLogger->log(spdlog::level::level_enum::err, msg);
+	DebugLogger->error(msg);
 }
 
+std::string Normalize(const std::string& norm)
+{
+	return norm;
+}
+
+std::string Normalize(const char* norm)
+{
+	return std::string(norm);
+}
+
+
+
+std::shared_ptr<spdlog::logger> getlog() noexcept
+{
+	return DebugLogger;
+}
 #endif 

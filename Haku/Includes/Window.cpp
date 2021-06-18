@@ -32,12 +32,10 @@ Window::Window()
     HAKU_CONSOLE_INIT;
     HAKU_LOG_INIT;
     /*should set a pattern...?*/
-    
-    HAKU_LOG_INFO("info");
-    HAKU_LOG_WARN("warn");
-    HAKU_LOG_CRIT("crit");
-    HAKU_LOG_ERR("error");
-    
+    HAKU_LOG_INFO("warn", "variadic");
+    HAKU_LOG_WARN("info", "variadic");
+    HAKU_LOG_CRIT("crit", "variadic");
+    HAKU_LOG_ERR("err", "variadic");
     if (!Handle)
     {
         throw EXCEPT_LAST_THROW();
