@@ -31,20 +31,16 @@ Window::Window()
         nullptr,nullptr,GetModuleHandle(nullptr),this));
     HAKU_CONSOLE_INIT;
     HAKU_LOG_INIT;
-    /*should set a pattern...?*/
-    HAKU_LOG_INFO("warn", "variadic");
-    HAKU_LOG_WARN("info", "variadic");
-    HAKU_LOG_CRIT("crit", "variadic");
-    HAKU_LOG_ERR("err", "variadic");
+    HAKU_LOG_INFO("Hello World");
     if (!Handle)
     {
         throw EXCEPT_LAST_THROW();
     }
+    HAKU_LOG_INFO("Initailzing Graphics Object");
     GFX = std::make_unique<Graphics>(Handle.get());
     SetWindowLongPtrA(Handle.get(), GWLP_USERDATA, (LONG_PTR)this);
 }
-/*Returns Loopp Control Variable*/
-/*Figure out a way to cleanly return exit code..*/
+/*Returns Loop Control Variable*/
 bool Window::HandleMessages() noexcept
 {
     MSG msg = { };

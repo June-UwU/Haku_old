@@ -6,11 +6,13 @@ void Application::Run()
 	while (AppWindow.HandleMessages())
 	{
 		//Clearing The back buffer on each cycle of event,apparently clearing doesn't present the damn frame..
-		//this is equivalent to wiping the board clean
+		//this is equivalent to wiping the board clear
+		//HAKU_LOG_INFO("BackBuffer Clearing");
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 
 		AppWindow.Gfx().Tinkering(30.0f);
 		//Present the Created frame
 		AppWindow.Gfx().PresentSwapChainBuffer();
+		//HAKU_LOG_INFO("Frame Time");
 	}
 }

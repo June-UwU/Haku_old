@@ -4,22 +4,28 @@
 #include "spdlog/spdlog.h"
 #include <cstdarg>
 //to allocate a console window and initiate a intra-translation unit logger that post messages to stdhandle
+inline std::string Normalize(const std::string& msg) noexcept { return msg; }
+inline std::string Normalize(const char* msg) noexcept { return std::string(msg); }
+template<typename Type>
+inline std::string Normalize(const Type& msg) noexcept { return std::to_string(msg); }
 #define HAKU_CONSOLE_INIT AllocConsole()
 void Init_Logger();
 template<typename Type , typename ...Types>
-void _StringAssemble(std::string& ret,Type& arg1, Types&...arg2);
+void _StringAssemble(std::string& ret,Type& arg1, Types&...arg2) noexcept;
 template <typename Type, typename ... Types>
-void log_info(Type& arg1, Types& ...arg2);
-void log_out_info(const std::string msg);
+void log_info(Type& arg1, Types& ...arg2)noexcept;
+void log_out_info(const std::string msg)noexcept;
 template <typename Type,typename ... Types>
-void log_warn(Type& arg1, Types& ...arg2);
-void log_out_warn(const std::string msg);
+void log_warn(Type& arg1, Types& ...arg2)noexcept;
+void log_out_warn(const std::string msg)noexcept;
 template<typename Type,typename...Types>
-void log_crit(Type& arg1, Types...arg2);
-void log_out_crit(const std::string msg);
+void log_crit(Type& arg1, Types...arg2)noexcept;
+void log_out_crit(const std::string msg)noexcept;
 template<typename Type,typename ...Types>
-void log_err(Type& arg1, Types...arg2);
-void log_out_err(const std::string msg);
+void log_err(Type& arg1, Types...arg2)noexcept;
+void log_out_err(const std::string msg)noexcept;
+
+
 //GENERAL THROW MACROS WHICH WOULD ALL BE STRIPPED TO NULL LINES
 #define HAKU_LOG_INIT Init_Logger()
 #define HAKU_LOG_INFO(...) log_info(__VA_ARGS__)
@@ -29,10 +35,10 @@ void log_out_err(const std::string msg);
 
 
 template<typename Type, typename ...Types>
-void _StringAssemble(std::string& ret, Type& arg1, Types& ...arg2)
+void _StringAssemble(std::string& ret, Type& arg1, Types& ...arg2) noexcept
 {
-	ret.append(arg1);
-	ret.append(" ");
+	ret.append(Normalize(arg1) + " ");
+	//ret.append(" ");
 	if constexpr (sizeof...(arg2) > 0)
 	{
 		_StringAssemble(ret, arg2...);
@@ -40,10 +46,10 @@ void _StringAssemble(std::string& ret, Type& arg1, Types& ...arg2)
 }
 
 template<typename Type, typename ...Types>
-void log_info(Type& arg1, Types & ...arg2)
+void log_info(Type& arg1, Types & ...arg2) noexcept
 {
-	std::string msg(arg1);
-	msg.append(" ");
+	std::string msg(Normalize(arg1) + " ");
+	//msg.append(" ");
 	if constexpr (sizeof...(arg2) > 0)
 	{
 		_StringAssemble(msg, arg2...);
@@ -52,10 +58,10 @@ void log_info(Type& arg1, Types & ...arg2)
 };
 
 template<typename Type, typename ...Types>
-void log_warn(Type& arg1, Types& ...arg2)
+void log_warn(Type& arg1, Types& ...arg2) noexcept
 {
-	std::string msg(arg1);
-	msg.append(" ");
+	std::string msg(Normalize(arg1) + " ");
+	//msg.append(" ");
 	if constexpr (sizeof...(arg2) > 0)
 	{
 		_StringAssemble(msg, arg2...);
@@ -64,10 +70,10 @@ void log_warn(Type& arg1, Types& ...arg2)
 }
 
 template<typename Type, typename ...Types>
-void log_crit(Type& arg1, Types ...arg2)
+void log_crit(Type& arg1, Types ...arg2) noexcept
 {
-	std::string msg(arg1);
-	msg.append(" ");
+	std::string msg(Normalize(arg1) + " ");
+	//msg.append(" ");
 	if constexpr (sizeof...(arg2))
 	{
 		_StringAssemble(msg, arg2...);
@@ -76,10 +82,10 @@ void log_crit(Type& arg1, Types ...arg2)
 }
 
 template<typename Type, typename ...Types>
-void log_err(Type& arg1, Types ...arg2)
+void log_err(Type& arg1, Types ...arg2) noexcept
 {
-	std::string msg(arg1);
-	msg.append(" ");
+	std::string msg(Normalize(arg1) + " ");
+	//msg.append(" ");
 	if constexpr (sizeof...(arg2))
 	{
 		_StringAssemble(msg, arg2...);
