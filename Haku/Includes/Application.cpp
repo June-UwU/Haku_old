@@ -1,6 +1,7 @@
 #include "Application.h"
 #include <string>
 //iterations is too fast for now have to ad
+//upon inspection iterations doesn't seem to be fast enough to produce tearing or cliping
 void Application::Run()
 {
 	while (AppWindow.HandleMessages())
@@ -11,7 +12,6 @@ void Application::Run()
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 
 		AppWindow.Gfx().Tinkering(30.0f);
-		//Present the Created frame
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		//HAKU_LOG_INFO("Frame Time");
 	}

@@ -14,7 +14,6 @@ Graphics::Graphics(HWND Handle)
 {
 	//next issue::refresh rate and resolutions
 	//Note:: Should Look into enumerating display and graphics adapter
-	HRESULT Code;
 	RECT ThrowAway;
 	GetClientRect(Handle, &ThrowAway);
 	//Aspect ratio set value..meh
@@ -46,18 +45,14 @@ Graphics::Graphics(HWND Handle)
 #ifdef _DEBUG
 	 flags = D3D11_CREATE_DEVICE_DEBUG ;
 #endif 
-	Code = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE,
+	 EXCEPT_HR_THROW(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE,
 		NULL, flags, FeatureLevel, 1,
-		D3D11_SDK_VERSION, &SwapChainDesc, &SwapChain, &Device, NULL, &DeviceContext);
+		D3D11_SDK_VERSION, &SwapChainDesc, &SwapChain, &Device, NULL, &DeviceContext))
 
 	Microsoft::WRL::ComPtr<ID3D11Resource>RenderingBackBuffer;
 	SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
-	EXCEPT_HR_THROW(Code)
-
-	Code = Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, RenderTarget.GetAddressOf());
-	
-	EXCEPT_HR_THROW(Code)
+	EXCEPT_HR_THROW(Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, RenderTarget.GetAddressOf()))
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
@@ -69,8 +64,7 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 
 void Graphics::PresentSwapChainBuffer()
 {
-	HRESULT Code = SwapChain->Present(0, 0);
-	EXCEPT_HR_THROW(Code)
+	EXCEPT_HR_THROW(SwapChain->Present(0, 0))
 }
 
 void Graphics::Tinkering(float ThetaZ)
@@ -89,30 +83,23 @@ void Graphics::Tinkering(float ThetaZ)
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> PixelShader;
 	Microsoft::WRL::ComPtr< ID3D11Buffer> RotationMatrix;
 
-	HRESULT hr{};
-
-
+	
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 	//done a preprosser conditional to avoid runtime check ... might need if we support costom shaders
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
 #endif
 
-	hr = D3DCompileFromFile(VertexShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0", 
-		flags, NULL, VertexBlob.GetAddressOf(), ErrorBlob.GetAddressOf());
-	if (!SUCCEEDED(hr))
-	{
-		OutputDebugStringA((char*)ErrorBlob->GetBufferPointer());
-	}
-	hr = D3DCompileFromFile(PixelShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
-		flags, NULL, PixelBlob.GetAddressOf(), ErrorBlob.GetAddressOf());
-	if (!SUCCEEDED(hr))
-	{
-		OutputDebugStringA((char*)ErrorBlob->GetBufferPointer());
-	}
+	EXCEPT_HR_THROW(D3DCompileFromFile(VertexShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0",
+		flags, NULL, VertexBlob.GetAddressOf(), ErrorBlob.GetAddressOf()));
 
-	hr = Device->CreateVertexShader(VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf());
-	hr = Device->CreatePixelShader(PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf());
+	
+	D3DCompileFromFile(PixelShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
+		flags, NULL, PixelBlob.GetAddressOf(), ErrorBlob.GetAddressOf());
+	
+
+	Device->CreateVertexShader(VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf());
+	Device->CreatePixelShader(PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf());
 
 	DeviceContext->VSSetShader(VertexShader.Get(), 0, 0);
 	DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
@@ -138,7 +125,7 @@ void Graphics::Tinkering(float ThetaZ)
 	D3D11_SUBRESOURCE_DATA ConstantSubResource{};
 	ConstantSubResource.pSysMem = &Matrix;
 	
-	hr = Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf());
+	Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf());
 	DeviceContext->VSSetConstantBuffers(0u, 1u, RotationMatrix.GetAddressOf());
 
 	struct Vertex
@@ -187,8 +174,8 @@ void Graphics::Tinkering(float ThetaZ)
 	D3D11_SUBRESOURCE_DATA IndexSubRes{0};
 	IndexSubRes.pSysMem = Index;
 
-	hr = Device->CreateBuffer(&IndexBufferDesc, &IndexSubRes, IndexBuffer.GetAddressOf());
-	hr = Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf());
+	Device->CreateBuffer(&IndexBufferDesc, &IndexSubRes, IndexBuffer.GetAddressOf());
+	Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf());
 	UINT stride = sizeof(Vertex);
 	UINT OffSet = 0u;
 	DeviceContext->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &stride, &OffSet);
@@ -200,8 +187,9 @@ void Graphics::Tinkering(float ThetaZ)
 		{ "COLOR",0,DXGI_FORMAT_R32G32B32_FLOAT,0,sizeof(float)*2,
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	hr = Device->CreateInputLayout(VertexInputDesc, std::size(VertexInputDesc), VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf());
+	Device->CreateInputLayout(VertexInputDesc, std::size(VertexInputDesc), VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf());
 	DeviceContext->IASetInputLayout(InputLayout.Get());
+	
 
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	DeviceContext->OMSetRenderTargets(1, RenderTarget.GetAddressOf(), 0);

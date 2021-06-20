@@ -7,8 +7,9 @@
 inline std::string Normalize(const std::string& msg) noexcept { return msg; }
 inline std::string Normalize(const char* msg) noexcept { return std::string(msg); }
 template<typename Type>
-inline std::string Normalize(const Type& msg) noexcept { return std::to_string(msg); }
+inline std::string Normalize(const Type msg) noexcept { return std::to_string(msg); }
 #define HAKU_CONSOLE_INIT AllocConsole()
+//init and reassignment is required static initialization silently fails
 void Init_Logger();
 template<typename Type , typename ...Types>
 void _StringAssemble(std::string& ret,Type& arg1, Types&...arg2) noexcept;
@@ -38,7 +39,6 @@ template<typename Type, typename ...Types>
 void _StringAssemble(std::string& ret, Type& arg1, Types& ...arg2) noexcept
 {
 	ret.append(Normalize(arg1) + " ");
-	//ret.append(" ");
 	if constexpr (sizeof...(arg2) > 0)
 	{
 		_StringAssemble(ret, arg2...);
@@ -49,7 +49,6 @@ template<typename Type, typename ...Types>
 void log_info(Type& arg1, Types & ...arg2) noexcept
 {
 	std::string msg(Normalize(arg1) + " ");
-	//msg.append(" ");
 	if constexpr (sizeof...(arg2) > 0)
 	{
 		_StringAssemble(msg, arg2...);
@@ -61,7 +60,6 @@ template<typename Type, typename ...Types>
 void log_warn(Type& arg1, Types& ...arg2) noexcept
 {
 	std::string msg(Normalize(arg1) + " ");
-	//msg.append(" ");
 	if constexpr (sizeof...(arg2) > 0)
 	{
 		_StringAssemble(msg, arg2...);
@@ -73,7 +71,6 @@ template<typename Type, typename ...Types>
 void log_crit(Type& arg1, Types ...arg2) noexcept
 {
 	std::string msg(Normalize(arg1) + " ");
-	//msg.append(" ");
 	if constexpr (sizeof...(arg2))
 	{
 		_StringAssemble(msg, arg2...);

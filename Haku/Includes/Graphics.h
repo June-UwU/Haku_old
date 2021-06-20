@@ -11,6 +11,8 @@ class Graphics
 {
 public:
 	Graphics(HWND handle);
+	Graphics(Graphics& rhs) = delete;
+	Graphics operator=(const Graphics& rhs) = delete;
 	void ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept;
 	void PresentSwapChainBuffer();
 	void Tinkering(float ThetaZ);

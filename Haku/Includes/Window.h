@@ -11,6 +11,8 @@ class Window
 {
 public:
 	Window();
+	Window(Window& rhs) = delete;
+	Window operator=(const Window&) = delete;
 	bool HandleMessages() noexcept;
 	Graphics& Gfx() noexcept;
 private:
