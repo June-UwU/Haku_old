@@ -1,6 +1,6 @@
 #pragma once
 #include "Throwables.h"
-
+#include "DXGIInfoQueue.h"
 #include <wrl.h>
 #include <d3d11.h>
 #include <dxgi.h>
@@ -19,9 +19,19 @@ public:
 private:
 	float ClientHeight;
 	float ClientWidth;
+#ifdef _DEBUG
+	DXGIInfoQueue InfoQueue;
+#endif
 	Microsoft::WRL::ComPtr<ID3D11Device> Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> DeviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTarget;
 };
 
+#if defined _DEBUG
+#define HAKU_INFO_QUEUE_LOG InfoQueue.log_message();
+#define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ /*create a throwable type and do a core  dumb*/} 
+#else
+#define HAKU_INFO_QUEUE_LOG 
+#define HAKU_INFO_QUEUE_CHECK_DUMP(Result)
+#endif

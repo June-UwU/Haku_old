@@ -64,6 +64,7 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 
 void Graphics::PresentSwapChainBuffer()
 {
+	HAKU_INFO_QUEUE_LOG;
 	EXCEPT_HR_THROW(SwapChain->Present(0, 0))
 }
 

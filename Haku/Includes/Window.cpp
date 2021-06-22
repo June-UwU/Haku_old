@@ -31,8 +31,7 @@ Window::Window()
         nullptr,nullptr,GetModuleHandle(nullptr),this));
     HAKU_CONSOLE_INIT;
     HAKU_LOG_INIT;
-    int c = 5;
-    HAKU_LOG_INFO("Hello World",c);
+    HAKU_LOG_INFO("Hello World");
     if (!Handle)
     {
         throw EXCEPT_LAST_THROW();

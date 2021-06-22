@@ -49,7 +49,7 @@ template<typename Type, typename ...Types>
 void log_info(Type& arg1, Types & ...arg2) noexcept
 {
 	std::string msg(Normalize(arg1) + " ");
-	if constexpr (sizeof...(arg2) > 0)
+	if constexpr (sizeof...(arg2))
 	{
 		_StringAssemble(msg, arg2...);
 	}
@@ -60,7 +60,7 @@ template<typename Type, typename ...Types>
 void log_warn(Type& arg1, Types& ...arg2) noexcept
 {
 	std::string msg(Normalize(arg1) + " ");
-	if constexpr (sizeof...(arg2) > 0)
+	if constexpr (sizeof...(arg2))
 	{
 		_StringAssemble(msg, arg2...);
 	}
