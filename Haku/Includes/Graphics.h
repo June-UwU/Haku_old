@@ -1,6 +1,7 @@
 #pragma once
 #include "Throwables.h"
 #include "DXGIInfoQueue.h"
+#include "GFXThrowables.h"
 #include <wrl.h>
 #include <d3d11.h>
 #include <dxgi.h>
@@ -30,8 +31,8 @@ private:
 
 #if defined _DEBUG
 #define HAKU_INFO_QUEUE_LOG InfoQueue.log_message();
-#define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ /*create a throwable type and do a core  dumb*/} 
+#define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ InfoQueue.log_message(); GFX_EXCEPT_HR_THROW(Result) } 
 #else
 #define HAKU_INFO_QUEUE_LOG 
-#define HAKU_INFO_QUEUE_CHECK_DUMP(Result)
+#define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ GFX_EXCEPT_HR_THROW }
 #endif

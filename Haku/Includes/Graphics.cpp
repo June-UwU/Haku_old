@@ -52,7 +52,8 @@ Graphics::Graphics(HWND Handle)
 	Microsoft::WRL::ComPtr<ID3D11Resource>RenderingBackBuffer;
 	SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
-	EXCEPT_HR_THROW(Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, RenderTarget.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, RenderTarget.GetAddressOf()))
+	
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
