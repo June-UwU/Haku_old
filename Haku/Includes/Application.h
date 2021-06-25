@@ -9,5 +9,6 @@ public:
 	void Run();
 private:
 	Window AppWindow;
+	float Rotate = 0.0f;
 };
 

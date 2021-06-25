@@ -12,6 +12,7 @@
 
 Graphics::Graphics(HWND Handle)
 {
+	
 	//next issue::refresh rate and resolutions
 	//Note:: Should Look into enumerating display and graphics adapter
 	RECT ThrowAway;
@@ -53,7 +54,6 @@ Graphics::Graphics(HWND Handle)
 	SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
 	HAKU_INFO_QUEUE_CHECK_DUMP(Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, RenderTarget.GetAddressOf()))
-	
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
@@ -116,7 +116,7 @@ void Graphics::Tinkering(float ThetaZ)
 	};
 
 	//yeah rotations are really fcked
-	Rotation Matrix{ DirectX::XMMatrixRotationY(ThetaZ) };//list initialization works...!!!or does it..!
+	Rotation Matrix{ DirectX::XMMatrixRotationZ(ThetaZ) };//list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
 	ConstantBuffer.ByteWidth = sizeof(Matrix);
@@ -204,7 +204,6 @@ void Graphics::Tinkering(float ThetaZ)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	DeviceContext->RSSetViewports(1, &vp);
-
-	
 	DeviceContext->DrawIndexed(std::size(Index), 0, 0);
+
 }

@@ -10,9 +10,10 @@ void Application::Run()
 		//this is equivalent to wiping the board clear
 		//HAKU_LOG_INFO("BackBuffer Clearing");
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
-
-		AppWindow.Gfx().Tinkering(30.0f);
+		
+		AppWindow.Gfx().Tinkering(0);
 		AppWindow.Gfx().PresentSwapChainBuffer();
+		Rotate += 0.01f;
 		//HAKU_LOG_INFO("Frame Time");
 	}
 }
