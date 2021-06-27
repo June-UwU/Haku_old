@@ -1,7 +1,7 @@
 #include "Window.h"
-#include <filesystem>
 #include "ExceptionMacros.h"
 #include "HakuLog.h"
+#include <filesystem>
 
 Window::Window()
 {
@@ -31,8 +31,7 @@ Window::Window()
         nullptr,nullptr,GetModuleHandle(nullptr),this));
     HAKU_CONSOLE_INIT;
     HAKU_LOG_INIT;
-    int c = 5;
-    HAKU_LOG_INFO("Hello World",c);
+    HAKU_LOG_INFO("Hello World");
     if (!Handle)
     {
         throw EXCEPT_LAST_THROW();
@@ -70,9 +69,65 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     {
     case WM_CLOSE:
     {
+        HAKU_LOG_INFO("Close Message");
         if (MessageBox(handle, "Really quit?", "Haku-Chan here..!", MB_OKCANCEL) == IDOK)
         {
             PostQuitMessage(0);
+        }
+    }break;
+    case WM_RBUTTONDOWN:
+    {
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Right Down", Coordinates.x, Coordinates.y);
+        Mouse.RightDown = true;
+    }break;
+    case WM_RBUTTONUP:
+    {
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Right Up", Coordinates.x, Coordinates.y);
+        Mouse.RightDown = false;
+    }break;
+    case WM_LBUTTONUP:
+    {
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Left Up", Coordinates.x, Coordinates.y);
+        Mouse.LeftDown = false;
+    }break;
+    case WM_LBUTTONDOWN:
+    {
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Left Down", Coordinates.x, Coordinates.y);
+        Mouse.LeftDown = true;
+    }break;
+    case WM_MOUSEMOVE:
+    {
+        /*
+        * THESE BICH DON"T WORK
+        *GET_X_LPARAM(lParam)
+        *GET_Y_LPARAM(lParam)
+        */
+        POINTS Coordinates  = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Moved", Coordinates.x, Coordinates.y);
+        if (MK_LBUTTON)
+        {
+            Mouse.LeftDown = true;
+        }
+        else
+        {
+            Mouse.LeftDown = false;
+        }
+        if (MK_RBUTTON)
+        {
+            Mouse.RightDown = true;
+        }
+        else
+        {
+            Mouse.RightDown = false;
         }
     }break;
     default:
@@ -88,7 +143,6 @@ LRESULT Window::Adapter(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
     //CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
     Window* HandleWindow = reinterpret_cast<Window*>(GetWindowLongPtr(handle, GWLP_USERDATA));
     return HandleWindow->WindowProc(handle, message, wParam, lParam);
-    return DefWindowProcA(handle, message, wParam, lParam);
 }
 
 
