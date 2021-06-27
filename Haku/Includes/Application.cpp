@@ -13,7 +13,12 @@ void Application::Run()
 		
 		AppWindow.Gfx().Tinkering(Rotate);
 		AppWindow.Gfx().PresentSwapChainBuffer();
-		Rotate += 0.01f;
+		if (AppWindow.Mouse.LeftDown)
+		{
+			Rotate += 0.01f;
+		}
 		//HAKU_LOG_INFO("Frame Time");
 	}
 }
+
+

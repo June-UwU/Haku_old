@@ -16,11 +16,12 @@ public:
 	Window operator=(const Window&) = delete;
 	bool HandleMessages() noexcept;
 	Graphics& Gfx() noexcept;
+public:
+	MouseEvents Mouse;
 private:
 	LRESULT CALLBACK WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK Adapter(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);
 private:
-	MouseEvents Mouse;
 	wil::unique_hwnd Handle;
 	wil::unique_hicon HakuIcon;
 	std::unique_ptr<Graphics>GFX;

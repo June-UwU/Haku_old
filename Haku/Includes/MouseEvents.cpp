@@ -1,9 +1,8 @@
 #include "MouseEvents.h"
 
-void MouseEvents::OnMouseMove(int X,int Y,bool Left,bool Right) noexcept
+
+void MouseEvents::OnMouseMove(int X,int Y) noexcept
 {
 	XPos = X;
 	YPos = Y;
-	LeftDown = Left;
-	RightDown = Right;
 }

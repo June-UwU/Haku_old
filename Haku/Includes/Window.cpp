@@ -69,6 +69,7 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     {
     case WM_CLOSE:
     {
+        HAKU_LOG_INFO("Close Message");
         if (MessageBox(handle, "Really quit?", "Haku-Chan here..!", MB_OKCANCEL) == IDOK)
         {
             PostQuitMessage(0);
@@ -76,31 +77,34 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     }break;
     case WM_RBUTTONDOWN:
     {
+        HAKU_LOG_INFO("Mouse Right Down");
         Mouse.RightDown = true;
     }break;
     case WM_RBUTTONUP:
     {
+        HAKU_LOG_INFO("Mouse Right Up");
         Mouse.RightDown = false;
     }break;
     case WM_LBUTTONUP:
     {
+        HAKU_LOG_INFO("Mouse Left Up");
         Mouse.LeftDown = false;
     }break;
     case WM_LBUTTONDOWN:
     {
+        HAKU_LOG_INFO("Mouse Left Down");
         Mouse.LeftDown = true;
     }break;
     case WM_MOUSEMOVE:
     {
         /*
         * THESE BICH DON"T WORK
-        * GET_X_LPARAM(lParam)
+        *GET_X_LPARAM(lParam)
         *GET_Y_LPARAM(lParam)
         */
-        POINT Coordinates;
-        MAKEPOINTS(Coordinates);
-        Mouse.XPos = Coordinates.x;
-        Mouse.XPos = Coordinates.y;
+        POINTS Coordinates  = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Moved", Coordinates.x, Coordinates.y);
         if (MK_LBUTTON)
         {
             Mouse.LeftDown = true;
