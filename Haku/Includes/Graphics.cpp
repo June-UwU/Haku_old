@@ -120,8 +120,8 @@ void Graphics::Tinkering(float ThetaZ)
 		
 		DirectX::XMMatrixTranspose(
 		DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientWidth),(ClientHeight / ClientHeight)),
-		DirectX::XMMatrixRotationZ(ThetaZ) ))
+		DirectX::XMMatrixRotationZ(ThetaZ),
+		DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientHeight))))
 	};//list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
