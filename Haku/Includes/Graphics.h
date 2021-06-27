@@ -22,10 +22,10 @@ private:
 #ifdef _DEBUG
 	DXGIInfoQueue InfoQueue;
 #endif
-	Microsoft::WRL::ComPtr<ID3D11Device> Device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> DeviceContext;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> SwapChain;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTarget;
+	Microsoft::WRL::ComPtr<ID3D11Device> _Device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> _DeviceContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> _SwapChain;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> _RenderTarget;
 };
 
 #if defined _DEBUG
@@ -33,5 +33,5 @@ private:
 #define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ InfoQueue.log_message(); GFX_EXCEPT_HR_THROW(Result) } 
 #else
 #define HAKU_INFO_QUEUE_LOG 
-#define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ GFX_EXCEPT_HR_THROW }
+#define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ GFX_EXCEPT_HR_THROW(Result) }
 #endif

@@ -11,7 +11,7 @@ void Application::Run()
 		//HAKU_LOG_INFO("BackBuffer Clearing");
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 		
-		AppWindow.Gfx().Tinkering(0);
+		AppWindow.Gfx().Tinkering(Rotate);
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		Rotate += 0.01f;
 		//HAKU_LOG_INFO("Frame Time");

@@ -1,7 +1,7 @@
 #include "Window.h"
-#include <filesystem>
 #include "ExceptionMacros.h"
 #include "HakuLog.h"
+#include <filesystem>
 
 Window::Window()
 {
@@ -74,6 +74,50 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
             PostQuitMessage(0);
         }
     }break;
+    case WM_RBUTTONDOWN:
+    {
+        Mouse.RightDown = true;
+    }break;
+    case WM_RBUTTONUP:
+    {
+        Mouse.RightDown = false;
+    }break;
+    case WM_LBUTTONUP:
+    {
+        Mouse.LeftDown = false;
+    }break;
+    case WM_LBUTTONDOWN:
+    {
+        Mouse.LeftDown = true;
+    }break;
+    case WM_MOUSEMOVE:
+    {
+        /*
+        * THESE BICH DON"T WORK
+        * GET_X_LPARAM(lParam)
+        *GET_Y_LPARAM(lParam)
+        */
+        POINT Coordinates;
+        MAKEPOINTS(Coordinates);
+        Mouse.XPos = Coordinates.x;
+        Mouse.XPos = Coordinates.y;
+        if (MK_LBUTTON)
+        {
+            Mouse.LeftDown = true;
+        }
+        else
+        {
+            Mouse.LeftDown = false;
+        }
+        if (MK_RBUTTON)
+        {
+            Mouse.RightDown = true;
+        }
+        else
+        {
+            Mouse.RightDown = false;
+        }
+    }break;
     default:
     {
         Ret = DefWindowProcA(handle, message, wParam, lParam);
@@ -87,7 +131,6 @@ LRESULT Window::Adapter(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
     //CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
     Window* HandleWindow = reinterpret_cast<Window*>(GetWindowLongPtr(handle, GWLP_USERDATA));
     return HandleWindow->WindowProc(handle, message, wParam, lParam);
-    return DefWindowProcA(handle, message, wParam, lParam);
 }
 
 
