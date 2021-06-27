@@ -77,22 +77,30 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     }break;
     case WM_RBUTTONDOWN:
     {
-        HAKU_LOG_INFO("Mouse Right Down");
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Right Down", Coordinates.x, Coordinates.y);
         Mouse.RightDown = true;
     }break;
     case WM_RBUTTONUP:
     {
-        HAKU_LOG_INFO("Mouse Right Up");
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Right Up", Coordinates.x, Coordinates.y);
         Mouse.RightDown = false;
     }break;
     case WM_LBUTTONUP:
     {
-        HAKU_LOG_INFO("Mouse Left Up");
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Left Up", Coordinates.x, Coordinates.y);
         Mouse.LeftDown = false;
     }break;
     case WM_LBUTTONDOWN:
     {
-        HAKU_LOG_INFO("Mouse Left Down");
+        POINTS Coordinates = MAKEPOINTS(lParam);
+        Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+        HAKU_LOG_INFO("Mouse Left Down", Coordinates.x, Coordinates.y);
         Mouse.LeftDown = true;
     }break;
     case WM_MOUSEMOVE:
