@@ -42,19 +42,43 @@ Graphics::Graphics(HWND Handle)
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	SwapChainDesc.Flags = 0;
 
-	D3D11_TEXTURE2D_DESC DepthStencilDesc{};
-	DepthStencilDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-	DepthStencilDesc.Width = ClientWidth;
-	DepthStencilDesc.Height = ClientHeight;
-	DepthStencilDesc.MipLevels = 1;
-	DepthStencilDesc.ArraySize = 1;
-	DepthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	DepthStencilDesc.SampleDesc.Quality = 0;
-	DepthStencilDesc.SampleDesc.Count = 1;
-	DepthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
+	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	DepthStencilBufferDesc.Width = ClientWidth;
+	DepthStencilBufferDesc.Height = ClientHeight;
+	DepthStencilBufferDesc.MipLevels = 1;
+	DepthStencilBufferDesc.ArraySize = 1;
+	DepthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	DepthStencilBufferDesc.SampleDesc.Quality = 0;
+	DepthStencilBufferDesc.SampleDesc.Count = 1;
+	DepthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	//wat..?
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
 
+	// Depth test parameters
+	DepthStencilDesc.DepthEnable = true;
+	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	// Stencil test parameters
+	DepthStencilDesc.StencilEnable = true;
+	DepthStencilDesc.StencilReadMask = 0xFF; //16 bits  or 2 bytes..? is it half the buffer..?
+	DepthStencilDesc.StencilWriteMask = 0xFF;//check how stencil is implemented
+
+	// Stencil operations if pixel is front-facing
+	DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing
+	DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create depth stencil state
+	
 	UINT flags = 0;
 #ifdef _DEBUG
 	 flags = D3D11_CREATE_DEVICE_DEBUG ;
@@ -66,9 +90,10 @@ Graphics::Graphics(HWND Handle)
 	Microsoft::WRL::ComPtr<ID3D11Resource>RenderingBackBuffer;
 	_SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
-	HAKU_INFO_QUEUE_LOG(_Device->CreateTexture2D(&DepthStencilDesc, 0, _DepthStencilBuffer.GetAddressOf()));
-	
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, 0, _DepthStencilBuffer.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
+	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
@@ -76,6 +101,7 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 	float Color[4]{Red,Blue,Green,Alpha};
 	/*Clearing the render target buffer to a single value...probably to Black{0,0,0,0}*/
 	_DeviceContext->ClearRenderTargetView(_RenderTarget.Get(), Color);
+	//Since there is no stencil state or view bounded by the RenderTargetView how do i do this..?
 }
 
 void Graphics::PresentSwapChainBuffer()
