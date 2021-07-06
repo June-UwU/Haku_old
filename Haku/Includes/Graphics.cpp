@@ -42,6 +42,19 @@ Graphics::Graphics(HWND Handle)
 	SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	SwapChainDesc.Flags = 0;
 
+	D3D11_TEXTURE2D_DESC DepthStencilDesc{};
+	DepthStencilDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	DepthStencilDesc.Width = ClientWidth;
+	DepthStencilDesc.Height = ClientHeight;
+	DepthStencilDesc.MipLevels = 1;
+	DepthStencilDesc.ArraySize = 1;
+	DepthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	DepthStencilDesc.SampleDesc.Quality = 0;
+	DepthStencilDesc.SampleDesc.Count = 1;
+	DepthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	//wat..?
+
 	UINT flags = 0;
 #ifdef _DEBUG
 	 flags = D3D11_CREATE_DEVICE_DEBUG ;
@@ -53,6 +66,8 @@ Graphics::Graphics(HWND Handle)
 	Microsoft::WRL::ComPtr<ID3D11Resource>RenderingBackBuffer;
 	_SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
+	HAKU_INFO_QUEUE_LOG(_Device->CreateTexture2D(&DepthStencilDesc, 0, _DepthStencilBuffer.GetAddressOf()));
+	
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
 }
 

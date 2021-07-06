@@ -113,7 +113,7 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
         POINTS Coordinates  = MAKEPOINTS(lParam);
         Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
         HAKU_LOG_INFO("Mouse Moved", Coordinates.x, Coordinates.y);
-        if (MK_LBUTTON)
+        if (!MK_LBUTTON)
         {
             Mouse.LeftDown = true;
         }
@@ -121,7 +121,7 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
         {
             Mouse.LeftDown = false;
         }
-        if (MK_RBUTTON)
+        if (!MK_RBUTTON)
         {
             Mouse.RightDown = true;
         }

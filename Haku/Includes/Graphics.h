@@ -26,6 +26,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> _DeviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> _SwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> _RenderTarget;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> _DepthStencilBuffer;
 };
 
 #if defined _DEBUG
