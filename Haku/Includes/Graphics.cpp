@@ -3,8 +3,9 @@
 #include <filesystem>
 #include <functional>
 #include <d3dcompiler.h>
+#include <dxgi1_6.h>
 
-
+#pragma comment(lib ,"DXGI.lib")
 #pragma comment(lib ,"d3d11.lib")
 #pragma comment(lib ,"dxgi.lib")
 #pragma comment(lib ,"d3dCompiler.lib")
@@ -12,9 +13,16 @@
 
 Graphics::Graphics(HWND Handle)
 {
-	
+	DXGI_ADAPTER_DESC1 _Desc;
+	Microsoft::WRL::ComPtr<IDXGIFactory1> _Factory;
+	Microsoft::WRL::ComPtr<IDXGIAdapter1> _Adapter;
+	Microsoft::WRL::ComPtr<IDXGIOutput> _Output;
 	//next issue::refresh rate and resolutions
 	//Note:: Should Look into enumerating display and graphics adapter
+	HAKU_INFO_QUEUE_CHECK_DUMP(CreateDXGIFactory1(__uuidof(IDXGIFactory), reinterpret_cast<void**>(_Factory.GetAddressOf())))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Factory->EnumAdapters1(0, _Adapter.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Adapter->GetDesc1(&_Desc))
+	HAKU_LOG_INFO(_Desc.Description);
 	RECT ThrowAway;
 	GetClientRect(Handle, &ThrowAway);
 	//Aspect ratio set value..meh
@@ -83,10 +91,9 @@ Graphics::Graphics(HWND Handle)
 #ifdef _DEBUG
 	 flags = D3D11_CREATE_DEVICE_DEBUG ;
 #endif 
-	 EXCEPT_HR_THROW(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE,
-		NULL, flags, FeatureLevel, 1,
-		D3D11_SDK_VERSION, &SwapChainDesc, &_SwapChain, &_Device, NULL, &_DeviceContext))
-
+	HAKU_INFO_QUEUE_CHECK_DUMP(D3D11CreateDeviceAndSwapChain(_Adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN,
+		NULL,flags,FeatureLevel,std::size(FeatureLevel), D3D11_SDK_VERSION,&SwapChainDesc,
+		_SwapChain.GetAddressOf(),_Device.GetAddressOf(),NULL,_DeviceContext.GetAddressOf()))
 	Microsoft::WRL::ComPtr<ID3D11Resource>RenderingBackBuffer;
 	_SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
 

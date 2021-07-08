@@ -1,11 +1,18 @@
 #pragma once
 #ifdef _DEBUG
+#include <stdlib.h>
 #include "spdlog/sinks/wincolor_sink.h"
 #include "spdlog/spdlog.h"
 #include <cstdarg>
 //to allocate a console window and initiate a intra-translation unit logger that post messages to stdhandle
 inline std::string Normalize(const std::string& msg) noexcept { return msg; }
 inline std::string Normalize(const char* msg) noexcept { return std::string(msg); }
+inline std::string Normalize(wchar_t* msg) noexcept
+{
+	char _Data[100]{};
+	wcstombs(_Data, msg, 100);
+	return std::string(_Data);
+}
 template<typename Type>
 inline std::string Normalize(const Type msg) noexcept { return std::to_string(msg); }
 #define HAKU_CONSOLE_INIT AllocConsole()
