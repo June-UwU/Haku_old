@@ -51,7 +51,7 @@ Graphics::Graphics(HWND Handle)
 	SwapChainDesc.Flags = 0;
 
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
-	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	//DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	DepthStencilBufferDesc.Width = ClientWidth;
 	DepthStencilBufferDesc.Height = ClientHeight;
 	DepthStencilBufferDesc.MipLevels = 1;
@@ -101,6 +101,18 @@ Graphics::Graphics(HWND Handle)
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
 	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc;
+	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+	DepthStenciViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	DepthStenciViewDesc.Texture2D.MipSlice = 0;
+
+	// Create the depth stencil view
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilView(_DepthStencilBuffer.Get(),&DepthStenciViewDesc,
+		_DepthStencilView.GetAddressOf()))
+
+// Bind the depth stencil view
+	_DeviceContext->OMSetRenderTargets(1,_RenderTarget.GetAddressOf(),_DepthStencilView.Get());
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
@@ -114,7 +126,7 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 void Graphics::PresentSwapChainBuffer()
 {
 	HAKU_INFO_QUEUE_LOG;
-	EXCEPT_HR_THROW(_SwapChain->Present(0, 0))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->Present(0, 0))
 }
 
 void Graphics::Tinkering(float ThetaZ)
@@ -140,16 +152,16 @@ void Graphics::Tinkering(float ThetaZ)
 	flags |= D3DCOMPILE_DEBUG;
 #endif
 
-	EXCEPT_HR_THROW(D3DCompileFromFile(VertexShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0",
-		flags, NULL, VertexBlob.GetAddressOf(), ErrorBlob.GetAddressOf()));
+	HAKU_INFO_QUEUE_CHECK_DUMP(D3DCompileFromFile(VertexShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0",
+		flags, NULL, VertexBlob.GetAddressOf(), ErrorBlob.GetAddressOf()))
 
 	
-	D3DCompileFromFile(PixelShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
-		flags, NULL, PixelBlob.GetAddressOf(), ErrorBlob.GetAddressOf());
+	HAKU_INFO_QUEUE_CHECK_DUMP(D3DCompileFromFile(PixelShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
+		flags, NULL, PixelBlob.GetAddressOf(), ErrorBlob.GetAddressOf()))
 	
 
-	_Device->CreateVertexShader(VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf());
-	_Device->CreatePixelShader(PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf());
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateVertexShader(VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreatePixelShader(PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf()))
 
 	_DeviceContext->VSSetShader(VertexShader.Get(), 0, 0);
 	_DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
@@ -181,7 +193,7 @@ void Graphics::Tinkering(float ThetaZ)
 	D3D11_SUBRESOURCE_DATA ConstantSubResource{};
 	ConstantSubResource.pSysMem = &Matrix;
 	
-	_Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf());
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf()))
 	_DeviceContext->VSSetConstantBuffers(0u, 1u, RotationMatrix.GetAddressOf());
 
 	struct Vertex
@@ -230,8 +242,8 @@ void Graphics::Tinkering(float ThetaZ)
 	D3D11_SUBRESOURCE_DATA IndexSubRes{0};
 	IndexSubRes.pSysMem = Index;
 
-	_Device->CreateBuffer(&IndexBufferDesc, &IndexSubRes, IndexBuffer.GetAddressOf());
-	_Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf());
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateBuffer(&IndexBufferDesc, &IndexSubRes, IndexBuffer.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf()))
 	UINT stride = sizeof(Vertex);
 	UINT OffSet = 0u;
 	_DeviceContext->IASetVertexBuffers(0, 1, VertexBuffer.GetAddressOf(), &stride, &OffSet);
@@ -243,7 +255,7 @@ void Graphics::Tinkering(float ThetaZ)
 		{ "COLOR",0,DXGI_FORMAT_R32G32B32_FLOAT,0,sizeof(float)*2,
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
-	_Device->CreateInputLayout(VertexInputDesc, std::size(VertexInputDesc), VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf());
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateInputLayout(VertexInputDesc, std::size(VertexInputDesc), VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf()))
 	_DeviceContext->IASetInputLayout(InputLayout.Get());
 	
 

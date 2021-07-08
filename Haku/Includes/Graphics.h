@@ -27,7 +27,8 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> _SwapChain;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> _RenderTarget;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> _DepthStencilBuffer;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> _DepthStencilState;;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> _DepthStencilState;
+	Microsoft::WRL::ComPtr< ID3D11DepthStencilView> _DepthStencilView;
 };
 
 #if defined _DEBUG
