@@ -51,7 +51,8 @@ Graphics::Graphics(HWND Handle)
 	SwapChainDesc.Flags = 0;
 
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
-	//DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS; //probable error cause..why..?
+	//A 32-bit z-buffer format that supports 24 bits for depth and 8 bits for stencil.
 	DepthStencilBufferDesc.Width = ClientWidth;
 	DepthStencilBufferDesc.Height = ClientHeight;
 	DepthStencilBufferDesc.MipLevels = 1;
@@ -102,8 +103,9 @@ Graphics::Graphics(HWND Handle)
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
 	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
 
-	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc;
-	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc{};
+	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT;//probable error cause..why..?
+	//32-bit depth, 8-bit stencil, and 24 bits are unused
 	DepthStenciViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	DepthStenciViewDesc.Texture2D.MipSlice = 0;
 
