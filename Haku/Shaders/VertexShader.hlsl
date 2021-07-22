@@ -11,7 +11,7 @@ struct ColorData
 
 cbuffer Rotation
 {
-	row_major matrix RotationZ;
+	matrix RotationZ;
 };
 
 ColorData main(VertexData Data)
