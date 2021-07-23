@@ -153,11 +153,11 @@ void Graphics::Tinkering(float ThetaZ)
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
 #endif
+	
 
 	HAKU_INFO_QUEUE_CHECK_DUMP(D3DCompileFromFile(VertexShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "vs_5_0",
 		flags, NULL, VertexBlob.GetAddressOf(), ErrorBlob.GetAddressOf()))
 
-	
 	HAKU_INFO_QUEUE_CHECK_DUMP(D3DCompileFromFile(PixelShaderPath.wstring().c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "ps_5_0",
 		flags, NULL, PixelBlob.GetAddressOf(), ErrorBlob.GetAddressOf()))
 	
@@ -182,7 +182,9 @@ void Graphics::Tinkering(float ThetaZ)
 		
 		DirectX::XMMatrixTranspose(
 		DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixRotationZ(ThetaZ),
+		DirectX::XMMatrixMultiply(
+		DirectX::XMMatrixRotationX(ThetaZ),
+		DirectX::XMMatrixRotationZ(ThetaZ)),
 		DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientHeight))))
 	};//list initialization works...!!!or does it..!
 
@@ -204,6 +206,7 @@ void Graphics::Tinkering(float ThetaZ)
 		{
 			float x;
 			float y;
+			float z;
 		}pos;
 		struct
 		{
@@ -214,10 +217,14 @@ void Graphics::Tinkering(float ThetaZ)
 	};
 	Vertex Vertices[]
 	{
-		{-0.5f,0.5f,1.0f,0.0f,0.0f},
-		{0.5f,0.5f,0.0f,1.0f,0.0f},
-		{0.5f,-0.5f,0.0f,0.0f,1.0f},
-		{-0.5f,-0.5f,1.0f,0.0f,1.0f}
+	{0.5f,-0.5f,0.5f,	1.0f,1.0f,1.0f}, //0
+	{0.5f,-0.5f,0.5f,	1.0f,1.0f,1.0f}, //1
+	{-0.5f,0.5f,0.5f,	1.0f,1.0f,1.0f}, //2
+	{0.5f,0.5f,0.5f,	1.0f,1.0f,1.0f}, //3
+	{-0.5f,-0.5f,0.1f,	1.0f,1.0f,1.0f}, //4
+	{0.5f,-0.5f,0.1f,	1.0f,1.0f,1.0f}, //5
+	{-0.5f,0.5f,0.1f,	1.0f,1.0f,1.0f}, //6
+	{0.5f,0.5f,0.1f,	1.0f,1.0f,1.0f}, //7
 	};
 
 	D3D11_BUFFER_DESC VertexDesc{};
@@ -231,8 +238,15 @@ void Graphics::Tinkering(float ThetaZ)
 	D3D11_SUBRESOURCE_DATA VertexSubRes{};
 	VertexSubRes.pSysMem = Vertices;
 
-	unsigned int Index[]{ 0,1,2,
-						  0,2,3};
+	//This might still fck up and need to be disambiguated
+
+	unsigned int Index[]{ 
+		0,2,1, 2,3,1,
+		1,3,5, 3,7,5,
+		2,6,3, 3,6,7,
+		4,5,7, 4,7,6,
+		0,4,2, 2,4,6,
+		0,1,4, 1,5,4 };
 
 	D3D11_BUFFER_DESC IndexBufferDesc{};
 	IndexBufferDesc.ByteWidth = sizeof(Index) * std::size(Index);
@@ -252,9 +266,9 @@ void Graphics::Tinkering(float ThetaZ)
 	_DeviceContext->IASetIndexBuffer(IndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	Microsoft::WRL::ComPtr<ID3D11InputLayout> InputLayout;
 	D3D11_INPUT_ELEMENT_DESC VertexInputDesc[]{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0,
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR",0,DXGI_FORMAT_R32G32B32_FLOAT,0,sizeof(float)*2,
+		{ "COLOR",0,DXGI_FORMAT_R32G32B32_FLOAT,0,sizeof(float)*3,
 		  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateInputLayout(VertexInputDesc, std::size(VertexInputDesc), VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), InputLayout.GetAddressOf()))
