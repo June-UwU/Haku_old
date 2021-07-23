@@ -181,11 +181,10 @@ void Graphics::Tinkering(float ThetaZ)
 	Rotation Matrix{ 
 		
 		DirectX::XMMatrixTranspose(
-		DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixMultiply(
-		DirectX::XMMatrixRotationX(ThetaZ),
-		DirectX::XMMatrixRotationZ(ThetaZ)),
-		DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientHeight))))
+		DirectX::XMMatrixRotationX(ThetaZ)*
+		DirectX::XMMatrixRotationZ(ThetaZ)*
+		DirectX::XMMatrixRotationY(ThetaZ)*
+		DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientHeight)))
 	};//list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
@@ -217,14 +216,15 @@ void Graphics::Tinkering(float ThetaZ)
 	};
 	Vertex Vertices[]
 	{
-	{0.5f,-0.5f,0.5f,	1.0f,1.0f,1.0f}, //0
-	{0.5f,-0.5f,0.5f,	1.0f,1.0f,1.0f}, //1
-	{-0.5f,0.5f,0.5f,	1.0f,1.0f,1.0f}, //2
-	{0.5f,0.5f,0.5f,	1.0f,1.0f,1.0f}, //3
-	{-0.5f,-0.5f,0.1f,	1.0f,1.0f,1.0f}, //4
-	{0.5f,-0.5f,0.1f,	1.0f,1.0f,1.0f}, //5
-	{-0.5f,0.5f,0.1f,	1.0f,1.0f,1.0f}, //6
-	{0.5f,0.5f,0.1f,	1.0f,1.0f,1.0f}, //7
+	{0.5f,  -0.5f,  -0.5f,	    1.0f,0.0f,0.0f}, //0
+	{-0.5f,  -0.5f, -0.5f,	    0.0f,1.0f,0.0f}, //1
+	{-0.5f, 0.5f,   -0.5f,	    0.0f,0.0f,1.0f}, //2
+	{0.5f,  0.5f,   -0.5f,	    1.0f,1.0f,0.0f}, //3
+
+	{-0.5f, -0.5f,  0.5f,	    0.0f,1.0f,1.0f}, //4
+	{0.5f,  -0.5f,  0.5f,	    1.0f,1.0f,1.0f}, //5
+	{-0.5f, 0.5f,   0.5f,	    1.0f,0.0f,1.0f}, //6
+	{0.5f,  0.5f,   0.5f,	    1.0f,0.5f,0.0f}, //7
 	};
 
 	D3D11_BUFFER_DESC VertexDesc{};
@@ -241,12 +241,12 @@ void Graphics::Tinkering(float ThetaZ)
 	//This might still fck up and need to be disambiguated
 
 	unsigned int Index[]{ 
-		0,2,1, 2,3,1,
-		1,3,5, 3,7,5,
-		2,6,3, 3,6,7,
-		4,5,7, 4,7,6,
-		0,4,2, 2,4,6,
-		0,1,4, 1,5,4 };
+		0,2,1,	/* R */	 0,4,5,  /* R */
+		0,3,2,	/* R */	 7,4,6,	 /* R */
+		7,5,4,	/* R */	 1,2,6,	 /* R */
+		1,6,4,	/* R */	 0,5,3,	 /* R */
+		3,5,7,	/* R */	 3,7,6,  /* R */
+		0,1,4,	/* R */	 3,6,2   /* R */};
 
 	D3D11_BUFFER_DESC IndexBufferDesc{};
 	IndexBufferDesc.ByteWidth = sizeof(Index) * std::size(Index);
