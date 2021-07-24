@@ -14,6 +14,7 @@ public:
 	Graphics(Graphics& rhs) = delete;
 	Graphics operator=(const Graphics& rhs) = delete;
 	void ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept;
+	void OnWindowResize(HWND Handle);
 	void PresentSwapChainBuffer();
 	void Tinkering(float ThetaZ);
 private:
@@ -25,6 +26,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Device> _Device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> _DeviceContext;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> _SwapChain;
+	Microsoft::WRL::ComPtr<ID3D11Resource> _RenderingBackBuffer;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> _RenderTarget;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> _DepthStencilBuffer;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> _DepthStencilState;

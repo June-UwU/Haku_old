@@ -134,6 +134,14 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     {
         Ret = DefWindowProcA(handle, message, wParam, lParam);
     }
+    case WM_SIZE:
+    {
+        static bool Trigger = false;
+        if (Trigger)
+        {
+            GFX->OnWindowResize(Handle.get());
+        }
+    }break;
     }
     return Ret;
 }

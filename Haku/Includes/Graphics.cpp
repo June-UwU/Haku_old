@@ -95,12 +95,11 @@ Graphics::Graphics(HWND Handle)
 	HAKU_INFO_QUEUE_CHECK_DUMP(D3D11CreateDeviceAndSwapChain(_Adapter.Get(), D3D_DRIVER_TYPE_UNKNOWN,
 		NULL,flags,FeatureLevel,std::size(FeatureLevel), D3D11_SDK_VERSION,&SwapChainDesc,
 		_SwapChain.GetAddressOf(),_Device.GetAddressOf(),NULL,_DeviceContext.GetAddressOf()))
-	Microsoft::WRL::ComPtr<ID3D11Resource>RenderingBackBuffer;
-	_SwapChain->GetBuffer(0, IID_PPV_ARGS(RenderingBackBuffer.ReleaseAndGetAddressOf()));
+	_SwapChain->GetBuffer(0, IID_PPV_ARGS(_RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, 0, _DepthStencilBuffer.GetAddressOf()))
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(_RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
 	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc{};
@@ -123,6 +122,74 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 	/*Clearing the render target buffer to a single value...probably to Black{0,0,0,0}*/
 	_DeviceContext->ClearRenderTargetView(_RenderTarget.Get(), Color);
 	//Since there is no stencil state or view bounded by the RenderTargetView how do i do this..?
+}
+
+void Graphics::OnWindowResize(HWND Handle)
+{
+	RECT Temp{};
+	GetClientRect(Handle, &Temp);
+	ClientHeight = Temp.bottom - Temp.top;
+	ClientWidth  = Temp.right  - Temp.left;
+	
+	_SwapChain->ResizeBuffers(1, ClientWidth, ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+
+	_DeviceContext->ClearState();
+
+	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
+	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS; //probable error cause..why..?
+	//A 32-bit z-buffer format that supports 24 bits for depth and 8 bits for stencil.
+	DepthStencilBufferDesc.Width = ClientWidth;
+	DepthStencilBufferDesc.Height = ClientHeight;
+	DepthStencilBufferDesc.MipLevels = 1;
+	DepthStencilBufferDesc.ArraySize = 1;
+	DepthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	DepthStencilBufferDesc.SampleDesc.Quality = 0;
+	DepthStencilBufferDesc.SampleDesc.Count = 1;
+	DepthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
+
+	// Depth test parameters
+	DepthStencilDesc.DepthEnable = true;
+	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	// Stencil test parameters
+	DepthStencilDesc.StencilEnable = true;
+	DepthStencilDesc.StencilReadMask = 0xFF; //16 bits  or 2 bytes..? is it half the buffer..?
+	DepthStencilDesc.StencilWriteMask = 0xFF;//check how stencil is implemented
+
+	// Stencil operations if pixel is front-facing
+	DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing
+	DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, 0, _DepthStencilBuffer.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(_RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
+	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc{};
+	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT;//probable error cause..why..?
+	//32-bit depth, 8-bit stencil, and 24 bits are unused
+	DepthStenciViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	DepthStenciViewDesc.Texture2D.MipSlice = 0;
+
+	// Create the depth stencil view
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilView(_DepthStencilBuffer.Get(), &DepthStenciViewDesc,
+		_DepthStencilView.GetAddressOf()))
+
+	// Bind the depth stencil view
+	_DeviceContext->OMSetRenderTargets(1, _RenderTarget.GetAddressOf(), _DepthStencilView.Get());
+
 }
 
 void Graphics::PresentSwapChainBuffer()
@@ -217,7 +284,7 @@ void Graphics::Tinkering(float ThetaZ)
 	Vertex Vertices[]
 	{
 	{0.5f,  -0.5f,  -0.5f,	    1.0f,0.0f,0.0f}, //0
-	{-0.5f,  -0.5f, -0.5f,	    0.0f,1.0f,0.0f}, //1
+	{-0.5f, -0.5f, -0.5f,	    0.0f,1.0f,0.0f}, //1
 	{-0.5f, 0.5f,   -0.5f,	    0.0f,0.0f,1.0f}, //2
 	{0.5f,  0.5f,   -0.5f,	    1.0f,1.0f,0.0f}, //3
 
