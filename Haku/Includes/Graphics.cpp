@@ -114,6 +114,15 @@ Graphics::Graphics(HWND Handle)
 
 // Bind the depth stencil view
 	_DeviceContext->OMSetRenderTargets(1,_RenderTarget.GetAddressOf(),_DepthStencilView.Get());
+
+	D3D11_VIEWPORT vp;
+	vp.Width = ClientWidth;
+	vp.Height = ClientHeight;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	_DeviceContext->RSSetViewports(1, &vp);
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
@@ -131,7 +140,8 @@ void Graphics::OnWindowResize(HWND Handle)
 	ClientHeight = Temp.bottom - Temp.top;
 	ClientWidth  = Temp.right  - Temp.left;
 	
-	_SwapChain->ResizeBuffers(1, ClientWidth, ClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->ResizeBuffers(1, ClientWidth, ClientHeight,
+		DXGI_FORMAT_R8G8B8A8_UNORM, 0))
 
 	_DeviceContext->ClearState();
 
@@ -190,6 +200,14 @@ void Graphics::OnWindowResize(HWND Handle)
 	// Bind the depth stencil view
 	_DeviceContext->OMSetRenderTargets(1, _RenderTarget.GetAddressOf(), _DepthStencilView.Get());
 
+	D3D11_VIEWPORT vp;
+	vp.Width = ClientWidth;
+	vp.Height = ClientHeight;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	_DeviceContext->RSSetViewports(1, &vp);
 }
 
 void Graphics::PresentSwapChainBuffer()
@@ -283,15 +301,15 @@ void Graphics::Tinkering(float ThetaZ)
 	};
 	Vertex Vertices[]
 	{
-	{0.5f,  -0.5f,  -0.5f,	    1.0f,0.0f,0.0f}, //0
-	{-0.5f, -0.5f, -0.5f,	    0.0f,1.0f,0.0f}, //1
-	{-0.5f, 0.5f,   -0.5f,	    0.0f,0.0f,1.0f}, //2
-	{0.5f,  0.5f,   -0.5f,	    1.0f,1.0f,0.0f}, //3
+	{0.4f,  -0.4f,  -0.4f,	    1.0f,0.0f,0.0f}, //0
+	{-0.4f, -0.4f,  -0.4f,	    0.0f,1.0f,0.0f}, //1
+	{-0.4f, 0.4f,   -0.4f,	    0.0f,0.0f,1.0f}, //2
+	{0.4f,  0.4f,   -0.4f,	    1.0f,1.0f,0.0f}, //3
 
-	{-0.5f, -0.5f,  0.5f,	    0.0f,1.0f,1.0f}, //4
-	{0.5f,  -0.5f,  0.5f,	    1.0f,1.0f,1.0f}, //5
-	{-0.5f, 0.5f,   0.5f,	    1.0f,0.0f,1.0f}, //6
-	{0.5f,  0.5f,   0.5f,	    1.0f,0.5f,0.0f}, //7
+	{-0.4f, -0.4f,  0.4f,	    0.0f,1.0f,1.0f}, //4
+	{0.4f,  -0.4f,  0.4f,	    1.0f,1.0f,1.0f}, //5
+	{-0.4f, 0.4f,   0.4f,	    1.0f,0.0f,1.0f}, //6
+	{0.4f,  0.4f,   0.4f,	    1.0f,0.5f,0.0f}, //7
 	};
 
 	D3D11_BUFFER_DESC VertexDesc{};
@@ -345,14 +363,10 @@ void Graphics::Tinkering(float ThetaZ)
 	_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	_DeviceContext->OMSetRenderTargets(1, _RenderTarget.GetAddressOf(), 0);
 
-	D3D11_VIEWPORT vp;
-	vp.Width = ClientWidth;
-	vp.Height = ClientHeight;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	_DeviceContext->RSSetViewports(1, &vp);
+	
 	_DeviceContext->DrawIndexed(std::size(Index), 0, 0);
 
+	DXGI_SWAP_CHAIN_DESC Temp{};
+	_SwapChain->GetDesc(&Temp);
+	HAKU_LOG_CRIT(Temp.BufferDesc.Width, Temp.BufferDesc.Height);
 }

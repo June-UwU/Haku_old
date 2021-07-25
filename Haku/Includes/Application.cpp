@@ -12,6 +12,7 @@ void Application::Run()
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 		
 		AppWindow.Gfx().Tinkering(Rotate);
+		AppWindow.Gfx().Tinkering(-Rotate);
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		if (AppWindow.Mouse.LeftDown)
 		{
