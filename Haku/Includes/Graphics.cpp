@@ -98,8 +98,8 @@ Graphics::Graphics(HWND Handle)
 	_SwapChain->GetBuffer(0, IID_PPV_ARGS(_RenderingBackBuffer.ReleaseAndGetAddressOf()));
 
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, 0, _DepthStencilBuffer.GetAddressOf()))
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(_RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
 	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc{};
@@ -131,6 +131,7 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 	/*Clearing the render target buffer to a single value...probably to Black{0,0,0,0}*/
 	_DeviceContext->ClearRenderTargetView(_RenderTarget.Get(), Color);
 	//Since there is no stencil state or view bounded by the RenderTargetView how do i do this..?
+	_DeviceContext->ClearDepthStencilView(_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Graphics::OnWindowResize(HWND Handle)
@@ -309,7 +310,7 @@ void Graphics::Tinkering(float ThetaZ)
 	{-0.4f, -0.4f,  0.4f,	    0.0f,1.0f,1.0f}, //4
 	{0.4f,  -0.4f,  0.4f,	    1.0f,1.0f,1.0f}, //5
 	{-0.4f, 0.4f,   0.4f,	    1.0f,0.0f,1.0f}, //6
-	{0.4f,  0.4f,   0.4f,	    1.0f,0.5f,0.0f}, //7
+	{0.4f,  0.4f,   0.4f,	    0.0f,0.0f,0.0f}, //7
 	};
 
 	D3D11_BUFFER_DESC VertexDesc{};
@@ -361,8 +362,6 @@ void Graphics::Tinkering(float ThetaZ)
 	
 
 	_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	_DeviceContext->OMSetRenderTargets(1, _RenderTarget.GetAddressOf(), 0);
-
 	
 	_DeviceContext->DrawIndexed(std::size(Index), 0, 0);
 
