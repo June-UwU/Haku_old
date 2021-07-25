@@ -18,6 +18,7 @@ void Application::Run()
 		{
 			Rotate += 0.01f;
 		}
+		AppWindow.SetTrigger();
 		//HAKU_LOG_INFO("Frame Time");
 	}
 }

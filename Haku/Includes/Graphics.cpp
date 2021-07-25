@@ -123,6 +123,11 @@ Graphics::Graphics(HWND Handle)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	_DeviceContext->RSSetViewports(1, &vp);
+
+#ifdef  _DEBUG
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->QueryInterface(IID_PPV_ARGS(_Debugger.GetAddressOf())))
+#endif //  _DEBUG
+
 }
 
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
@@ -136,16 +141,15 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 
 void Graphics::OnWindowResize(HWND Handle)
 {
+	HAKU_LOG_INFO("Window Resize Window");
 	RECT Temp{};
 	GetClientRect(Handle, &Temp);
 	ClientHeight = Temp.bottom - Temp.top;
 	ClientWidth  = Temp.right  - Temp.left;
 	
+	_DeviceContext->ClearState();
 	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->ResizeBuffers(1, ClientWidth, ClientHeight,
 		DXGI_FORMAT_R8G8B8A8_UNORM, 0))
-
-	_DeviceContext->ClearState();
-
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
 	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS; //probable error cause..why..?
 	//A 32-bit z-buffer format that supports 24 bits for depth and 8 bits for stencil.
@@ -213,6 +217,7 @@ void Graphics::OnWindowResize(HWND Handle)
 
 void Graphics::PresentSwapChainBuffer()
 {
+	HAKU_LIVE_OBJECT;
 	HAKU_INFO_QUEUE_LOG;
 	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->Present(0, 0))
 }
@@ -264,13 +269,13 @@ void Graphics::Tinkering(float ThetaZ)
 	};
 	
 	//yeah rotations are really fcked
-	Rotation Matrix{ 
-		
+	Rotation Matrix{
+
 		DirectX::XMMatrixTranspose(
-		DirectX::XMMatrixRotationX(ThetaZ)*
-		DirectX::XMMatrixRotationZ(ThetaZ)*
-		DirectX::XMMatrixRotationY(ThetaZ)*
-		DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientHeight)))
+		DirectX::XMMatrixRotationX(ThetaZ) *
+		DirectX::XMMatrixRotationZ(ThetaZ) *
+		DirectX::XMMatrixRotationY(ThetaZ) *
+		DirectX::XMMatrixScaling((ClientHeight / ClientWidth),(ClientHeight / ClientHeight),0.0f))
 	};//list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};

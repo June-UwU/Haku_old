@@ -21,6 +21,7 @@ private:
 	float ClientHeight;
 	float ClientWidth;
 #ifdef _DEBUG
+	Microsoft::WRL::ComPtr<ID3D11Debug> _Debugger;
 	DXGIInfoQueue InfoQueue;
 #endif
 	Microsoft::WRL::ComPtr<ID3D11Device> _Device;
@@ -34,6 +35,7 @@ private:
 };
 
 #if defined _DEBUG
+#define HAKU_LIVE_OBJECT _Debugger->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL)
 #define HAKU_INFO_QUEUE_LOG InfoQueue.log_message();
 #define HAKU_INFO_QUEUE_CHECK_DUMP(Result) if(Result!=S_OK){ InfoQueue.log_message(); GFX_EXCEPT_HR_THROW(Result) } 
 #else

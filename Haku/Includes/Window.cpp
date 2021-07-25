@@ -3,6 +3,7 @@
 #include "HakuLog.h"
 #include <filesystem>
 
+
 Window::Window()
 {
     // Register the window class.
@@ -55,6 +56,11 @@ bool Window::HandleMessages() noexcept
         DispatchMessage(&msg);
         return true;
     }
+}
+
+void Window::SetTrigger() noexcept
+{
+    Trigger = true;
 }
 
 Graphics& Window::Gfx() noexcept
@@ -136,14 +142,17 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     }
    case WM_SIZE:
     {
-        static bool Trigger = false;
-        if (Trigger)
-        {
-            GFX->OnWindowResize(Handle.get());
-        }
+       if (Trigger)
+       {
+            //GFX->OnWindowResize(Handle.get());
+       }
     }break;
-    }
-    return Ret;
+   case WM_KEYDOWN:
+   {
+
+   }break;
+   }
+   return Ret;
 }
 
 LRESULT Window::Adapter(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
