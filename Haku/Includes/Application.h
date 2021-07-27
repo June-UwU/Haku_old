@@ -10,5 +10,6 @@ public:
 private:
 	Window AppWindow;
 	float Rotate = 0.0f;
+	float ZBuffer = 0.9f;
 };
 

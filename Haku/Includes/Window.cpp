@@ -149,7 +149,11 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
     }break;
    case WM_KEYDOWN:
    {
-
+       KeyBoard.KeyPress(wParam);
+   }break;
+   case WM_KEYUP:
+   {
+       KeyBoard.KeyRelease(wParam);
    }break;
    }
    return Ret;

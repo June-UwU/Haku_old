@@ -16,7 +16,7 @@ public:
 	void ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept;
 	void OnWindowResize(HWND Handle);
 	void PresentSwapChainBuffer();
-	void Tinkering(float ThetaZ);
+	void Tinkering(float ThetaZ, float Translation);
 private:
 	float ClientHeight;
 	float ClientWidth;

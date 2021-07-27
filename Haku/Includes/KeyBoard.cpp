@@ -2,12 +2,12 @@
 
 void KeyBoardEvents::KeyPress(int KeyCode) noexcept
 {
-	KeyState[KeyCode] = true;
+	KeyState.set(KeyCode);
 }
 
 void KeyBoardEvents::KeyRelease(int KeyCode) noexcept
 {
-	KeyState[KeyCode] = false;
+	KeyState.reset(KeyCode);
 }
 
 bool KeyBoardEvents::CheckKeyDown(int KeyCode) noexcept

@@ -8,6 +8,6 @@ public:
 	void KeyRelease(int KeyCode) noexcept;
 	bool CheckKeyDown(int KeyCode) noexcept;
 private:
-	std::bitset<256> KeyState{};
+	std::bitset<256u> KeyState{};
 };
 

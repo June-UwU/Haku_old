@@ -28,14 +28,14 @@ Graphics::Graphics(HWND Handle)
 	//Aspect ratio set value..meh
 	ClientHeight = ThrowAway.bottom - ThrowAway.top;
 	ClientWidth = ThrowAway.right - ThrowAway.left;
-	
+
 	D3D_FEATURE_LEVEL FeatureLevel[]{ 
 		D3D_FEATURE_LEVEL_11_0
 	};
 	/*SwapChainDesc need Client rect..*/
 	DXGI_SWAP_CHAIN_DESC SwapChainDesc{};
-	SwapChainDesc.BufferDesc.Width = 0;
-	SwapChainDesc.BufferDesc.Height = 0;
+	SwapChainDesc.BufferDesc.Width = ClientWidth;
+	SwapChainDesc.BufferDesc.Height = ClientHeight;
 	SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	SwapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
 	SwapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
@@ -51,29 +51,28 @@ Graphics::Graphics(HWND Handle)
 	SwapChainDesc.Flags = 0;
 
 	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
-	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS; //probable error cause..why..?
-	//A 32-bit z-buffer format that supports 24 bits for depth and 8 bits for stencil.
+	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32G8X24_TYPELESS;
 	DepthStencilBufferDesc.Width = ClientWidth;
 	DepthStencilBufferDesc.Height = ClientHeight;
-	DepthStencilBufferDesc.MipLevels = 1;
-	DepthStencilBufferDesc.ArraySize = 1;
+	DepthStencilBufferDesc.MipLevels = 1u;
+	DepthStencilBufferDesc.ArraySize = 1u;
 	DepthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	DepthStencilBufferDesc.SampleDesc.Quality = 0;
-	DepthStencilBufferDesc.SampleDesc.Count = 1;
+	DepthStencilBufferDesc.SampleDesc.Quality = 0u;
+	DepthStencilBufferDesc.SampleDesc.Count = 1u;
 	DepthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
+	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc{};
 
-	// Depth test parameters
+		// Depth test parameters
 	DepthStencilDesc.DepthEnable = true;
 	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 	// Stencil test parameters
 	DepthStencilDesc.StencilEnable = true;
 	DepthStencilDesc.StencilReadMask = 0xFF; //16 bits  or 2 bytes..? is it half the buffer..?
 	DepthStencilDesc.StencilWriteMask = 0xFF;//check how stencil is implemented
-
+	
 	// Stencil operations if pixel is front-facing
 	DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 	DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
@@ -96,15 +95,14 @@ Graphics::Graphics(HWND Handle)
 		NULL,flags,FeatureLevel,std::size(FeatureLevel), D3D11_SDK_VERSION,&SwapChainDesc,
 		_SwapChain.GetAddressOf(),_Device.GetAddressOf(),NULL,_DeviceContext.GetAddressOf()))
 	_SwapChain->GetBuffer(0, IID_PPV_ARGS(_RenderingBackBuffer.ReleaseAndGetAddressOf()));
-
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, 0, _DepthStencilBuffer.GetAddressOf()))
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(_RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
+
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
-	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
+	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1u);
+	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, nullptr, _DepthStencilBuffer.GetAddressOf()))
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc{};
-	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT;//probable error cause..why..?
-	//32-bit depth, 8-bit stencil, and 24 bits are unused
+	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
 	DepthStenciViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	DepthStenciViewDesc.Texture2D.MipSlice = 0;
 
@@ -115,14 +113,6 @@ Graphics::Graphics(HWND Handle)
 // Bind the depth stencil view
 	_DeviceContext->OMSetRenderTargets(1,_RenderTarget.GetAddressOf(),_DepthStencilView.Get());
 
-	D3D11_VIEWPORT vp;
-	vp.Width = ClientWidth;
-	vp.Height = ClientHeight;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	_DeviceContext->RSSetViewports(1, &vp);
 
 #ifdef  _DEBUG
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->QueryInterface(IID_PPV_ARGS(_Debugger.GetAddressOf())))
@@ -136,83 +126,12 @@ void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) 
 	/*Clearing the render target buffer to a single value...probably to Black{0,0,0,0}*/
 	_DeviceContext->ClearRenderTargetView(_RenderTarget.Get(), Color);
 	//Since there is no stencil state or view bounded by the RenderTargetView how do i do this..?
-	_DeviceContext->ClearDepthStencilView(_DepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+	_DeviceContext->ClearDepthStencilView(_DepthStencilView.Get(), D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void Graphics::OnWindowResize(HWND Handle)
 {
-	HAKU_LOG_INFO("Window Resize Window");
-	RECT Temp{};
-	GetClientRect(Handle, &Temp);
-	ClientHeight = Temp.bottom - Temp.top;
-	ClientWidth  = Temp.right  - Temp.left;
-	
-	_DeviceContext->ClearState();
-	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->ResizeBuffers(1, ClientWidth, ClientHeight,
-		DXGI_FORMAT_R8G8B8A8_UNORM, 0))
-	D3D11_TEXTURE2D_DESC DepthStencilBufferDesc{};
-	DepthStencilBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS; //probable error cause..why..?
-	//A 32-bit z-buffer format that supports 24 bits for depth and 8 bits for stencil.
-	DepthStencilBufferDesc.Width = ClientWidth;
-	DepthStencilBufferDesc.Height = ClientHeight;
-	DepthStencilBufferDesc.MipLevels = 1;
-	DepthStencilBufferDesc.ArraySize = 1;
-	DepthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	DepthStencilBufferDesc.SampleDesc.Quality = 0;
-	DepthStencilBufferDesc.SampleDesc.Count = 1;
-	DepthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	D3D11_DEPTH_STENCIL_DESC DepthStencilDesc;
-
-	// Depth test parameters
-	DepthStencilDesc.DepthEnable = true;
-	DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-	// Stencil test parameters
-	DepthStencilDesc.StencilEnable = true;
-	DepthStencilDesc.StencilReadMask = 0xFF; //16 bits  or 2 bytes..? is it half the buffer..?
-	DepthStencilDesc.StencilWriteMask = 0xFF;//check how stencil is implemented
-
-	// Stencil operations if pixel is front-facing
-	DepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	DepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-	DepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	DepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-	// Stencil operations if pixel is back-facing
-	DepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-	DepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-	DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-	DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateTexture2D(&DepthStencilBufferDesc, 0, _DepthStencilBuffer.GetAddressOf()))
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilState(&DepthStencilDesc, _DepthStencilState.GetAddressOf()))
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateRenderTargetView(_RenderingBackBuffer.Get(), nullptr, _RenderTarget.GetAddressOf()))
-	_DeviceContext->OMSetDepthStencilState(_DepthStencilState.Get(), 1);
-
-	D3D11_DEPTH_STENCIL_VIEW_DESC DepthStenciViewDesc{};
-	DepthStenciViewDesc.Format = DXGI_FORMAT_D32_FLOAT;//probable error cause..why..?
-	//32-bit depth, 8-bit stencil, and 24 bits are unused
-	DepthStenciViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	DepthStenciViewDesc.Texture2D.MipSlice = 0;
-
-	// Create the depth stencil view
-	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilView(_DepthStencilBuffer.Get(), &DepthStenciViewDesc,
-		_DepthStencilView.GetAddressOf()))
-
-	// Bind the depth stencil view
-	_DeviceContext->OMSetRenderTargets(1, _RenderTarget.GetAddressOf(), _DepthStencilView.Get());
-
-	D3D11_VIEWPORT vp;
-	vp.Width = ClientWidth;
-	vp.Height = ClientHeight;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	_DeviceContext->RSSetViewports(1, &vp);
+	//stub
 }
 
 void Graphics::PresentSwapChainBuffer()
@@ -222,7 +141,7 @@ void Graphics::PresentSwapChainBuffer()
 	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->Present(0, 0))
 }
 
-void Graphics::Tinkering(float ThetaZ)
+void Graphics::Tinkering(float ThetaZ , float Translation)
 {
 	char FilePath[256];
 	GetModuleFileNameA(nullptr, FilePath, std::size(FilePath));
@@ -272,11 +191,15 @@ void Graphics::Tinkering(float ThetaZ)
 	Rotation Matrix{
 
 		DirectX::XMMatrixTranspose(
-		DirectX::XMMatrixRotationX(ThetaZ) *
-		DirectX::XMMatrixRotationZ(ThetaZ) *
-		DirectX::XMMatrixRotationY(ThetaZ) *
-		DirectX::XMMatrixScaling((ClientHeight / ClientWidth),(ClientHeight / ClientHeight),0.0f))
+		DirectX::XMMatrixRotationX(ThetaZ)*
+		DirectX::XMMatrixRotationZ(ThetaZ)*
+		DirectX::XMMatrixRotationY(ThetaZ)*
+		DirectX::XMMatrixTranslation(0.0f,0.0f,Translation) *
+		//DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientWidth))
+		DirectX::XMMatrixPerspectiveLH(1.0,ClientHeight/ClientWidth,1.0f,100.00f)
+		)
 	};//list initialization works...!!!or does it..!
+
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
 	ConstantBuffer.ByteWidth = sizeof(Matrix);
@@ -307,15 +230,15 @@ void Graphics::Tinkering(float ThetaZ)
 	};
 	Vertex Vertices[]
 	{
-	{0.4f,  -0.4f,  -0.4f,	    1.0f,0.0f,0.0f}, //0
-	{-0.4f, -0.4f,  -0.4f,	    0.0f,1.0f,0.0f}, //1
-	{-0.4f, 0.4f,   -0.4f,	    0.0f,0.0f,1.0f}, //2
-	{0.4f,  0.4f,   -0.4f,	    1.0f,1.0f,0.0f}, //3
+	{0.5f,  -0.5f,  -0.5f,	    1.0f,0.0f,0.0f}, //0
+	{-0.5f, -0.5f,  -0.5f,	    0.0f,1.0f,0.0f}, //1
+	{-0.5f, 0.5f,   -0.5f,	    0.0f,0.0f,1.0f}, //2
+	{0.5f,  0.5f,   -0.5f,	    1.0f,1.0f,0.0f}, //3
 
-	{-0.4f, -0.4f,  0.4f,	    0.0f,1.0f,1.0f}, //4
-	{0.4f,  -0.4f,  0.4f,	    1.0f,1.0f,1.0f}, //5
-	{-0.4f, 0.4f,   0.4f,	    1.0f,0.0f,1.0f}, //6
-	{0.4f,  0.4f,   0.4f,	    0.0f,0.0f,0.0f}, //7
+	{-0.5f, -0.5f,  0.5f,	    0.0f,1.0f,1.0f}, //4
+	{0.5f,  -0.5f,  0.5f,	    1.0f,1.0f,1.0f}, //5
+	{-0.5f, 0.5f,   0.5f,	    1.0f,0.0f,1.0f}, //6
+	{0.5f,  0.5f,   0.5f,	    0.0f,0.0f,0.0f}, //7
 	};
 
 	D3D11_BUFFER_DESC VertexDesc{};
@@ -328,9 +251,7 @@ void Graphics::Tinkering(float ThetaZ)
 
 	D3D11_SUBRESOURCE_DATA VertexSubRes{};
 	VertexSubRes.pSysMem = Vertices;
-
-	//This might still fck up and need to be disambiguated
-
+	
 	unsigned int Index[]{ 
 		0,2,1,	/* R */	 0,4,5,  /* R */
 		0,3,2,	/* R */	 7,4,6,	 /* R */
@@ -372,5 +293,13 @@ void Graphics::Tinkering(float ThetaZ)
 
 	DXGI_SWAP_CHAIN_DESC Temp{};
 	_SwapChain->GetDesc(&Temp);
+	D3D11_VIEWPORT vp;
+	vp.Width = ClientWidth;
+	vp.Height = ClientHeight;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	_DeviceContext->RSSetViewports(1u, &vp);
 	HAKU_LOG_CRIT(Temp.BufferDesc.Width, Temp.BufferDesc.Height);
 }

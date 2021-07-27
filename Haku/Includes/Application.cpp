@@ -11,15 +11,23 @@ void Application::Run()
 		//HAKU_LOG_INFO("BackBuffer Clearing");
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f,0.0f, 1.0f);
 		
-		AppWindow.Gfx().Tinkering(Rotate);
+		AppWindow.Gfx().Tinkering(Rotate,ZBuffer);
 		//AppWindow.Gfx().Tinkering(-Rotate);
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		if (AppWindow.Mouse.LeftDown)
 		{
 			Rotate += 0.01f;
 		}
+		if (AppWindow.KeyBoard.CheckKeyDown(VK_UP))
+		{
+			ZBuffer += 0.1f;
+		}
+		if(AppWindow.KeyBoard.CheckKeyDown(VK_DOWN))
+		{
+			ZBuffer -= 0.1f;
+		}
 		AppWindow.SetTrigger();
-		//HAKU_LOG_INFO("Frame Time");
+		HAKU_LOG_INFO(ZBuffer);
 	}
 }
 
