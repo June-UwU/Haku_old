@@ -120,6 +120,11 @@ Graphics::Graphics(HWND Handle)
 
 }
 
+Graphics::~Graphics()
+{
+	HAKU_LIVE_OBJECT;
+}
+
 void Graphics::ClearBackBuffer(float Red, float Blue, float Green, float Alpha) noexcept
 {
 	float Color[4]{Red,Blue,Green,Alpha};
@@ -136,7 +141,6 @@ void Graphics::OnWindowResize(HWND Handle)
 
 void Graphics::PresentSwapChainBuffer()
 {
-	HAKU_LIVE_OBJECT;
 	HAKU_INFO_QUEUE_LOG;
 	HAKU_INFO_QUEUE_CHECK_DUMP(_SwapChain->Present(0, 0))
 }
@@ -194,8 +198,7 @@ void Graphics::Tinkering(float ThetaZ , float Translation)
 		DirectX::XMMatrixRotationX(ThetaZ)*
 		DirectX::XMMatrixRotationZ(ThetaZ)*
 		DirectX::XMMatrixRotationY(ThetaZ)*
-		DirectX::XMMatrixTranslation(0.0f,0.0f,Translation) *
-		//DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientWidth))
+		DirectX::XMMatrixTranslation(0.0f,0.0f,Translation +4.0f) *
 		DirectX::XMMatrixPerspectiveLH(1.0,-ClientHeight/ClientWidth,1.0f,10.00f)
 		)
 	};//list initialization works...!!!or does it..!
@@ -261,7 +264,7 @@ void Graphics::Tinkering(float ThetaZ , float Translation)
 		0,1,4,	/* R */	 3,6,2   /* R */};
 
 	D3D11_BUFFER_DESC IndexBufferDesc{};
-	IndexBufferDesc.ByteWidth = sizeof(Index) * std::size(Index);
+	IndexBufferDesc.ByteWidth = sizeof(unsigned int) * std::size(Index);
 	IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags = 0;
