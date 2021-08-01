@@ -196,7 +196,7 @@ void Graphics::Tinkering(float ThetaZ , float Translation)
 		DirectX::XMMatrixRotationY(ThetaZ)*
 		DirectX::XMMatrixTranslation(0.0f,0.0f,Translation) *
 		//DirectX::XMMatrixScaling((ClientHeight / ClientWidth), (ClientHeight / ClientHeight),(ClientHeight / ClientWidth))
-		DirectX::XMMatrixPerspectiveLH(1.0,ClientHeight/ClientWidth,1.0f,100.00f)
+		DirectX::XMMatrixPerspectiveLH(1.0,-ClientHeight/ClientWidth,1.0f,10.00f)
 		)
 	};//list initialization works...!!!or does it..!
 
