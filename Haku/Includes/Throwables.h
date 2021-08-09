@@ -9,11 +9,11 @@ class Throwables : std::exception
 public:
 	Throwables(int Line, std::string File, std::string Function, HRESULT Code) noexcept;
 	const char* what() noexcept;
+
 private:
-	int Line;
+	int			Line;
 	std::string Function;
 	std::string File;
-	HRESULT Code;
+	HRESULT		Code;
 	std::string OutputString;
 };
-
