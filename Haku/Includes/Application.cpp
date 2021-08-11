@@ -27,6 +27,5 @@ void Application::Run()
 			ZBuffer -= 0.1f;
 		}
 		AppWindow.SetTrigger();
-		HAKU_LOG_INFO(ZBuffer);
 	}
 }

@@ -93,36 +93,99 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
 		}
 	}
 	break;
+	case WM_MOUSEWHEEL:
+	{
+		POINTS Coordinates = MAKEPOINTS(lParam);
+		short  ScrollDelta = GET_WHEEL_DELTA_WPARAM(wParam);
+		if (ScrollDelta > 0)
+		{
+			HAKU_LOG_INFO("Mouse Scroll Up", Coordinates.x, Coordinates.y);
+			Mouse.MouseScrollUp(Coordinates.x, Coordinates.y);
+		}
+		else
+		{
+			HAKU_LOG_INFO("Mouse Scroll Down", Coordinates.x, Coordinates.y);
+			Mouse.MouseScrollDown(Coordinates.x, Coordinates.y);
+		}
+		if (wParam & MK_LBUTTON)
+		{
+			Mouse.LeftDown = true;
+		}
+		else
+		{
+			Mouse.LeftDown = false;
+		}
+		if (wParam & MK_RBUTTON)
+		{
+			Mouse.RightDown = true;
+		}
+		else
+		{
+			Mouse.RightDown = false;
+		}
+	}break;
 	case WM_RBUTTONDOWN:
 	{
 		POINTS Coordinates = MAKEPOINTS(lParam);
-		Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+		Mouse.OnRightPress(Coordinates.x, Coordinates.y);
 		HAKU_LOG_INFO("Mouse Right Down", Coordinates.x, Coordinates.y);
 		Mouse.RightDown = true;
+		if (wParam & MK_LBUTTON)
+		{
+			Mouse.LeftDown = true;
+		}
+		else
+		{
+			Mouse.RightDown = false;
+		}
 	}
 	break;
 	case WM_RBUTTONUP:
 	{
 		POINTS Coordinates = MAKEPOINTS(lParam);
-		Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+		Mouse.OnRightRelease(Coordinates.x, Coordinates.y);
 		HAKU_LOG_INFO("Mouse Right Up", Coordinates.x, Coordinates.y);
 		Mouse.RightDown = false;
+		if (wParam & MK_LBUTTON)
+		{
+			Mouse.LeftDown = true;
+		}
+		else
+		{
+			Mouse.LeftDown = false;
+		}
 	}
 	break;
 	case WM_LBUTTONUP:
 	{
 		POINTS Coordinates = MAKEPOINTS(lParam);
-		Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+		Mouse.OnLeftRelease(Coordinates.x, Coordinates.y);
 		HAKU_LOG_INFO("Mouse Left Up", Coordinates.x, Coordinates.y);
 		Mouse.LeftDown = false;
+		if (wParam & MK_RBUTTON)
+		{
+			Mouse.RightDown = true;
+		}
+		else
+		{
+			Mouse.RightDown = false;
+		}
 	}
 	break;
 	case WM_LBUTTONDOWN:
 	{
 		POINTS Coordinates = MAKEPOINTS(lParam);
-		Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
+		Mouse.OnLeftPress(Coordinates.x, Coordinates.y);
 		HAKU_LOG_INFO("Mouse Left Down", Coordinates.x, Coordinates.y);
 		Mouse.LeftDown = true;
+		if (wParam & MK_RBUTTON)
+		{
+			Mouse.RightDown = true;
+		}
+		else
+		{
+			Mouse.RightDown = false;
+		}
 	}
 	break;
 	case WM_MOUSEMOVE:
@@ -135,7 +198,7 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
 		POINTS Coordinates = MAKEPOINTS(lParam);
 		Mouse.OnMouseMove(Coordinates.x, Coordinates.y);
 		HAKU_LOG_INFO("Mouse Moved", Coordinates.x, Coordinates.y);
-		if (!MK_LBUTTON)
+		if (wParam & MK_LBUTTON)
 		{
 			Mouse.LeftDown = true;
 		}
@@ -143,7 +206,7 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
 		{
 			Mouse.LeftDown = false;
 		}
-		if (!MK_RBUTTON)
+		if (wParam & MK_RBUTTON)
 		{
 			Mouse.RightDown = true;
 		}
