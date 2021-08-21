@@ -316,7 +316,6 @@ void Graphics::Tinkering(float ThetaZ, float Translation)
 
 	_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	_DeviceContext->DrawIndexed(std::size(Index), 0, 0);
 
 	DXGI_SWAP_CHAIN_DESC Temp{};
 	_SwapChain->GetDesc(&Temp);
@@ -328,4 +327,5 @@ void Graphics::Tinkering(float ThetaZ, float Translation)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	_DeviceContext->RSSetViewports(1u, &vp);
+	_DeviceContext->DrawIndexed(std::size(Index), 0, 0);
 }

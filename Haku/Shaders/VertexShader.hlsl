@@ -1,6 +1,6 @@
 struct VertexData
 {
-	float2 pos : POSITION;
+	float3 pos : POSITION;
 	float3 color : COLOR;
 };
 struct ColorData

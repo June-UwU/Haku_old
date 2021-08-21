@@ -8,6 +8,7 @@
 
 class Graphics
 {
+	friend class AssetManager;
 public:
 	Graphics(HWND handle);
 	Graphics(Graphics& rhs) = delete;

@@ -1,7 +1,10 @@
 #pragma once
 #include "Window.h"
-#include <chrono>
 #include "HakuLog.h"
+/*TEMP INCLUDED*/
+#include "AssetManager.h"
+/*-------------*/
+#include <chrono>
 class Application
 {
 public:
@@ -10,6 +13,7 @@ public:
 
 private:
 	Window AppWindow;
+	AssetManager Manager;
 	float  Rotate  = 0.0f;
 	float  ZBuffer = 0.9f;
 };

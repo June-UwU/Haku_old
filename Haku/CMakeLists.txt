@@ -16,6 +16,7 @@ add_executable(${PROJECT_NAME}
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/spdlog/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/wil/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/assimp/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Includes")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Shaders")
 
