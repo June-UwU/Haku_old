@@ -16,7 +16,7 @@ public:
 	AssetManager();
 	AssetManager(Graphics* GFX);
 	void SetGraphics(Graphics* Pointer) noexcept;
-	void ReadModel(std::string& path, float x);
+	void ReadModel(std::string& path, float ThetaZ, float translation);
 	void Draw(float ThetaZ, float translation) noexcept;
 	void Test(float ThetaZ, float translation);
 private:

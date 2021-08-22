@@ -32,7 +32,7 @@ void AssetManager::SetGraphics(Graphics* Pointer) noexcept
 	GFX = Pointer;
 }
 
-void AssetManager::ReadModel(std::string& path, float x)
+void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 {
 	auto			 DeviceContext = GFX->_DeviceContext.Get();
 	auto			 Device		   = GFX->_Device.Get();
@@ -63,8 +63,8 @@ void AssetManager::ReadModel(std::string& path, float x)
 	GetModuleFileNameA(nullptr, FilePath, std::size(FilePath));
 	std::filesystem::path Exe(FilePath);
 	Exe.remove_filename();
-	std::filesystem::path VertexShaderPath(Exe / "../../Shaders/VertexShader.hlsl");
-	std::filesystem::path PixelShaderPath(Exe / "../../Shaders/PixelShader.hlsl");
+	std::filesystem::path VertexShaderPath(Exe / "../../Shaders/VertexShader1.hlsl");
+	std::filesystem::path PixelShaderPath(Exe / "../../Shaders/PixelShader1.hlsl");
 
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 	// done a preprosser conditional to avoid runtime check ... might need if we support costom shaders
@@ -125,7 +125,6 @@ void AssetManager::ReadModel(std::string& path, float x)
 
 	D3D11_INPUT_ELEMENT_DESC VertexInputDesc[]{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
 	/*CONSTANT BUFFER*/
@@ -133,10 +132,11 @@ void AssetManager::ReadModel(std::string& path, float x)
 	Rotation Matrix{
 
 		DirectX::XMMatrixTranspose(
-			DirectX::XMMatrixTranslation(0.0f, 0.0f, x) *
-			DirectX::XMMatrixPerspectiveLH(GFX->ClientHeight, GFX->ClientWidth, 0.5f, 10.00f))
-	}; // list initialization works...!!!or does it..!
-
+			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
+			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
+			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f) *
+			DirectX::XMMatrixPerspectiveLH(GFX->ClientWidth, GFX->ClientHeight, 0.5f, 100.00f))
+	};
 	D3D11_BUFFER_DESC ConstantBuffer{};
 	ConstantBuffer.ByteWidth	  = sizeof(Matrix);
 	ConstantBuffer.Usage		  = D3D11_USAGE_DYNAMIC;
@@ -170,7 +170,8 @@ void AssetManager::Draw(float ThetaZ, float translation) noexcept
 		DirectX::XMMatrixTranspose(
 			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
 			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
-			DirectX::XMMatrixPerspectiveLH(1.0, -GFX->ClientHeight / GFX->ClientWidth, 0.5f, 10.00f))
+			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f)*
+			DirectX::XMMatrixPerspectiveLH(GFX->ClientWidth, GFX->ClientHeight, 0.5f, 10.00f))
 	}; // list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
@@ -263,6 +264,7 @@ void AssetManager::Test(float ThetaZ, float translation)
 		DirectX::XMMatrixTranspose(
 			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
 			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
+			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f) *
 			DirectX::XMMatrixPerspectiveLH(1.0, -GFX->ClientHeight / GFX->ClientWidth, 0.5f, 10.00f))
 	}; // list initialization works...!!!or does it..!
 
