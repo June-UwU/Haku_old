@@ -13,7 +13,6 @@ void Application::Run()
 	std::filesystem::path ModelPath(Exe / "../../Model/Medic/Medical worker.obj");
 	std::string path = ModelPath.string();
 	Manager.ReadModel(path,Rotate,ZBuffer);
-	//Manager.Test(Rotate,ZBuffer);
 	while (AppWindow.HandleMessages())
 	{
 		// Clearing The back buffer on each cycle of event,apparently clearing doesn't present the damn frame..

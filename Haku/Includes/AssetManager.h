@@ -3,7 +3,6 @@
 struct Point
 {
 	DirectX::XMFLOAT3 Pos;
-	DirectX::XMFLOAT3 Col;
 };
 struct Rotation
 {
@@ -18,7 +17,6 @@ public:
 	void SetGraphics(Graphics* Pointer) noexcept;
 	void ReadModel(std::string& path, float ThetaZ, float translation);
 	void Draw(float ThetaZ, float translation) noexcept;
-	void Test(float ThetaZ, float translation);
 private:
 	Graphics* GFX = nullptr;
 

@@ -40,17 +40,15 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 
 	const aiScene* Scene = Importer.ReadFile(
 		path,
-		aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded | aiProcess_Triangulate | aiProcess_FindInvalidData |
-			aiProcess_FindInstances | aiProcess_OptimizeMeshes | aiProcess_FlipWindingOrder);
+		aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
 
 	auto meshes = *Scene->mMeshes;
 	VertexData.reserve(meshes->mNumVertices);
 	for (int i = 0; i < meshes->mNumVertices; i++)
 	{
-		VertexData.push_back({ { meshes->mVertices[i].x, meshes->mVertices[i].y, meshes->mVertices[i].z },
-							   DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f) });
+		VertexData.push_back({ { meshes->mVertices[i].x, meshes->mVertices[i].y, meshes->mVertices[i].z } });
 	}
-	Indexdata.reserve(meshes->mNumFaces * 3);
+	Indexdata.reserve(long int(meshes->mNumFaces) * 3);
 	for (int i = 0; i < meshes->mNumFaces; i++)
 	{
 		auto& Face = meshes->mFaces[i];
@@ -67,7 +65,6 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 	std::filesystem::path PixelShaderPath(Exe / "../../Shaders/PixelShader1.hlsl");
 
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-	// done a preprosser conditional to avoid runtime check ... might need if we support costom shaders
 #if defined(DEBUG) || defined(_DEBUG)
 	flags |= D3DCOMPILE_DEBUG;
 #endif
@@ -111,7 +108,7 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 	VertexSubRes.pSysMem = VertexData.data();
 
 	D3D11_BUFFER_DESC IndexBufferDesc{};
-	IndexBufferDesc.ByteWidth	   = sizeof(unsigned int) * Indexdata.size();
+	IndexBufferDesc.ByteWidth	   = sizeof(int) * Indexdata.size();
 	IndexBufferDesc.Usage		   = D3D11_USAGE_DEFAULT;
 	IndexBufferDesc.BindFlags	   = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags = 0;
@@ -124,7 +121,7 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 	EXCEPT_HR_THROW(Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf()))
 
 	D3D11_INPUT_ELEMENT_DESC VertexInputDesc[]{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 
 	/*CONSTANT BUFFER*/
@@ -133,8 +130,7 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 
 		DirectX::XMMatrixTranspose(
 			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
-			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
-			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f) *
+			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f) *
 			DirectX::XMMatrixPerspectiveLH(GFX->ClientWidth, GFX->ClientHeight, 0.5f, 100.00f))
 	};
 	D3D11_BUFFER_DESC ConstantBuffer{};
@@ -170,8 +166,7 @@ void AssetManager::Draw(float ThetaZ, float translation) noexcept
 		DirectX::XMMatrixTranspose(
 			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
 			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
-			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f)*
-			DirectX::XMMatrixPerspectiveLH(GFX->ClientWidth, GFX->ClientHeight, 0.5f, 10.00f))
+			DirectX::XMMatrixPerspectiveLH(GFX->ClientWidth, GFX->ClientHeight, 0.5f, 100.00f))
 	}; // list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
@@ -201,146 +196,4 @@ void AssetManager::Draw(float ThetaZ, float translation) noexcept
 	DeviceContext->DrawIndexed(Indexdata.size(), 0, 0);
 }
 
-void AssetManager::Test(float ThetaZ, float translation)
-{
-	auto DeviceContext = GFX->_DeviceContext.Get();
-	auto Device		   = GFX->_Device.Get();
 
-	char FilePath[256];
-	GetModuleFileNameA(nullptr, FilePath, std::size(FilePath));
-	std::filesystem::path Exe(FilePath);
-	Exe.remove_filename();
-	std::filesystem::path VertexShaderPath(Exe / "../../Shaders/VertexShader.hlsl");
-	std::filesystem::path PixelShaderPath(Exe / "../../Shaders/PixelShader.hlsl");
-
-
-	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-	// done a preprosser conditional to avoid runtime check ... might need if we support costom shaders
-#if defined(DEBUG) || defined(_DEBUG)
-	flags |= D3DCOMPILE_DEBUG;
-#endif
-
-	EXCEPT_HR_THROW(D3DCompileFromFile(
-		VertexShaderPath.wstring().c_str(),
-		NULL,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main",
-		"vs_5_0",
-		flags,
-		NULL,
-		VertexBlob.GetAddressOf(),
-		ErrorBlob.GetAddressOf()))
-
-		EXCEPT_HR_THROW(D3DCompileFromFile(
-			PixelShaderPath.wstring().c_str(),
-			NULL,
-			D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			"main",
-			"ps_5_0",
-			flags,
-			NULL,
-			PixelBlob.GetAddressOf(),
-			ErrorBlob.GetAddressOf()))
-
-		EXCEPT_HR_THROW(Device->CreateVertexShader(
-			VertexBlob->GetBufferPointer(),
-			VertexBlob->GetBufferSize(),
-			nullptr,
-			VertexShader.GetAddressOf()))
-		EXCEPT_HR_THROW(Device->CreatePixelShader(
-			PixelBlob->GetBufferPointer(),
-			PixelBlob->GetBufferSize(),
-			nullptr,
-			PixelShader.GetAddressOf()))
-
-
-	struct Rotation
-	{
-		DirectX::XMMATRIX RotationZ;
-	};
-
-	Rotation Matrix{
-
-		DirectX::XMMatrixTranspose(
-			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
-			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
-			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f) *
-			DirectX::XMMatrixPerspectiveLH(1.0, -GFX->ClientHeight / GFX->ClientWidth, 0.5f, 10.00f))
-	}; // list initialization works...!!!or does it..!
-
-	D3D11_BUFFER_DESC ConstantBuffer{};
-	ConstantBuffer.ByteWidth = sizeof(Matrix);
-	ConstantBuffer.Usage = D3D11_USAGE_DYNAMIC;
-	ConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	ConstantBuffer.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	D3D11_SUBRESOURCE_DATA ConstantSubResource{};
-	ConstantSubResource.pSysMem = &Matrix;
-
-	EXCEPT_HR_THROW(
-		Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf()))
-
-	Point Vertices[]{
-		{ {0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f } },  // 0
-		{ {-0.5f, -0.5f, -0.5f},{ 0.0f, 1.0f, 0.0f} }, // 1
-		{ {-0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f} },  // 2
-		{ {0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 0.0f} },   // 3
-
-		{ {-0.5f, -0.5f, 0.5f},{ 0.0f, 1.0f, 1.0f} }, // 4
-		{ {0.5f, -0.5f, 0.5f}, {1.0f, 1.0f, 1.0f} },  // 5
-		{ {-0.5f, 0.5f, 0.5f}, {1.0f, 0.0f, 1.0f} },  // 6
-		{ {0.5f, 0.5f, 0.5f}, {0.0f, 0.0f, 0.0f }},	  // 7
-	};
-
-	for (Point p : Vertices)
-	{
-		VertexData.push_back(p);
-	}
-
-	D3D11_BUFFER_DESC VertexDesc{};
-	VertexDesc.ByteWidth = sizeof(Point) * VertexData.size();
-	VertexDesc.Usage = D3D11_USAGE_DEFAULT;
-	VertexDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	VertexDesc.CPUAccessFlags = 0;
-	VertexDesc.MiscFlags = 0;
-	VertexDesc.StructureByteStride = sizeof(Point);
-
-	D3D11_SUBRESOURCE_DATA VertexSubRes{};
-	VertexSubRes.pSysMem = VertexData.data();
-
-	unsigned int Index[]{ 0, 2, 1, /* R */ 0, 4, 5, /* R */
-						  0, 3, 2, /* R */ 7, 4, 6, /* R */
-						  7, 5, 4, /* R */ 1, 2, 6, /* R */
-						  1, 6, 4, /* R */ 0, 5, 3, /* R */
-						  3, 5, 7, /* R */ 3, 7, 6, /* R */
-						  0, 1, 4, /* R */ 3, 6, 2 /* R */ };
-	for (int i : Index)
-	{
-		Indexdata.push_back(i);
-	}
-
-	D3D11_BUFFER_DESC IndexBufferDesc{};
-	IndexBufferDesc.ByteWidth = sizeof(int) * Indexdata.size();
-	IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	IndexBufferDesc.CPUAccessFlags = 0;
-	IndexBufferDesc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA IndexSubRes{ 0 };
-	IndexSubRes.pSysMem = Indexdata.data();
-
-	EXCEPT_HR_THROW(Device->CreateBuffer(&IndexBufferDesc, &IndexSubRes, IndexBuffer.GetAddressOf()))
-	EXCEPT_HR_THROW(Device->CreateBuffer(&VertexDesc, &VertexSubRes, VertexBuffer.GetAddressOf()))
-	D3D11_INPUT_ELEMENT_DESC				  VertexInputDesc[]{
-		 { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		 { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(float) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-	};
-	EXCEPT_HR_THROW(Device->CreateInputLayout(
-		VertexInputDesc,
-		std::size(VertexInputDesc),
-		VertexBlob->GetBufferPointer(),
-		VertexBlob->GetBufferSize(),
-		InputLayout.GetAddressOf()))
-
-
-}
