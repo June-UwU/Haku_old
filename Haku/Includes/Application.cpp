@@ -10,7 +10,8 @@ void Application::Run()
 	GetModuleFileNameA(nullptr, FilePath, std::size(FilePath));
 	std::filesystem::path Exe(FilePath);
 	Exe.remove_filename();
-	std::filesystem::path ModelPath(Exe / "../../Model/Medic/Medical worker.obj");
+	//std::filesystem::path ModelPath(Exe / "../../Model/Medic/Medical worker.obj");
+	std::filesystem::path ModelPath(Exe / "../../Model/suzanne.obj");
 	std::string path = ModelPath.string();
 	Manager.ReadModel(path,Rotate,ZBuffer);
 	while (AppWindow.HandleMessages())
