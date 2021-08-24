@@ -32,17 +32,14 @@ void AssetManager::SetGraphics(Graphics* Pointer) noexcept
 	GFX = Pointer;
 }
 
-void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
+void AssetManager::ReadModel(std::string& path, float ThetaZ, float translation)
 {
-
-	
 	auto			 DeviceContext = GFX->_DeviceContext.Get();
 	auto			 Device		   = GFX->_Device.Get();
 	Assimp::Importer Importer;
 
 	const aiScene* Scene = Importer.ReadFile(
-		path,
-		aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
+		path, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
 
 	auto meshes = *Scene->mMeshes;
 	VertexData.reserve(meshes->mNumVertices);
@@ -117,7 +114,6 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 	IndexBufferDesc.BindFlags	   = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags = 0;
 	IndexBufferDesc.MiscFlags	   = 0;
-	
 
 	D3D11_SUBRESOURCE_DATA IndexSubRes{ 0 };
 	IndexSubRes.pSysMem = Indexdata.data();
@@ -136,8 +132,8 @@ void AssetManager::ReadModel(std::string& path, float ThetaZ,float translation)
 		DirectX::XMMatrixTranspose(
 			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
 			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f) *
-			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f) *
-			DirectX::XMMatrixPerspectiveLH(1.0, -GFX->ClientHeight / GFX->ClientWidth, 0.5f, 100.00f))
+			DirectX::XMMatrixScaling(2.0f, 2.0f, 2.0f) *
+			DirectX::XMMatrixPerspectiveFovLH(90, GFX->ClientWidth / GFX->ClientHeight, 0.5f, 100.0f))
 	};
 	D3D11_BUFFER_DESC ConstantBuffer{};
 	ConstantBuffer.ByteWidth	  = sizeof(Matrix);
@@ -172,8 +168,8 @@ void AssetManager::Draw(float ThetaZ, float translation) noexcept
 		DirectX::XMMatrixTranspose(
 			DirectX::XMMatrixRotationX(ThetaZ) * DirectX::XMMatrixRotationZ(ThetaZ) *
 			DirectX::XMMatrixRotationY(ThetaZ) * DirectX::XMMatrixTranslation(0.0f, 0.0f, translation + 4.0f) *
-			DirectX::XMMatrixScaling(2.0f,2.0f,2.0f) *
-			DirectX::XMMatrixPerspectiveLH(1.0, -GFX->ClientHeight / GFX->ClientWidth, 0.5f, 100.00f))
+			DirectX::XMMatrixScaling(2.0f, 2.0f, 2.0f) *
+			DirectX::XMMatrixPerspectiveFovLH(90, GFX->ClientWidth / GFX->ClientHeight, 0.5f, 100.0f))
 	}; // list initialization works...!!!or does it..!
 
 	D3D11_BUFFER_DESC ConstantBuffer{};
@@ -202,5 +198,3 @@ void AssetManager::Draw(float ThetaZ, float translation) noexcept
 	DeviceContext->RSSetViewports(1u, &vp);
 	DeviceContext->DrawIndexed(Indexdata.size(), 0, 0);
 }
-
-
