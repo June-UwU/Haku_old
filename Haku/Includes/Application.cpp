@@ -1,8 +1,6 @@
 #include "Application.h"
 #include <filesystem>
 #include <string>
-// iterations is too fast for now have to ad
-// upon inspection iterations doesn't seem to be fast enough to produce tearing or cliping
 void Application::Run()
 {
 	Manager.SetGraphics(&AppWindow.Gfx());
@@ -20,7 +18,7 @@ void Application::Run()
 		// this is equivalent to wiping the board clear
 		// HAKU_LOG_INFO("BackBuffer Clearing");
 		AppWindow.Gfx().ClearBackBuffer(0.0f, 0.0f, 0.0f, 1.0f);
-		Manager.Draw(Rotate,ZBuffer);
+		Manager.Draw();
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		if (AppWindow.Mouse.LeftDown)
 		{

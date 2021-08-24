@@ -19,9 +19,9 @@ public:
 	void	 PresentSwapChainBuffer();
 	void	 Tinkering(float ThetaZ, float Translation);
 
-private:
 	float ClientHeight;
 	float ClientWidth;
+private:
 #ifdef _DEBUG
 	Microsoft::WRL::ComPtr<ID3D11Debug> _Debugger;
 	DXGIInfoQueue						InfoQueue;
