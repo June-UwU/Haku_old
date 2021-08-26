@@ -5,7 +5,7 @@ struct Point
 {
 	DirectX::XMFLOAT3 Pos;
 };
-struct Rotation
+struct ConstVertexData
 {
 	DirectX::XMMATRIX RotationZ;
 };
