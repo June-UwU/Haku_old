@@ -16,11 +16,13 @@ add_executable(${PROJECT_NAME}
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/spdlog/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/wil/include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/assimp/include")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Includes")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Shaders")
 
 
 target_link_options(${PROJECT_NAME} PRIVATE "/SUBSYSTEM:WINDOWS")
+target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/../Vendor/assimp/Lib/assimp-vc142-mt.lib)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME} )
 

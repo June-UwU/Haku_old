@@ -230,11 +230,13 @@ LRESULT Window::WindowProc(HWND handle, UINT message, WPARAM wParam, LPARAM lPar
 	break;
 	case WM_KEYDOWN:
 	{
+		HAKU_LOG_INFO("Keydown message", wParam);
 		KeyBoard.KeyPress(wParam);
 	}
 	break;
 	case WM_KEYUP:
 	{
+		HAKU_LOG_INFO("Keyup message", wParam);
 		KeyBoard.KeyRelease(wParam);
 	}
 	break;

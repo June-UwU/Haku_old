@@ -1,6 +1,6 @@
-[submodule "Vendor\\wil"]
-	path = Vendor\\wil
+[submodule "Vendor/wil"]
+	path = Vendor/wil
 	url = https://github.com/microsoft/wil.git
-[submodule "Vendor\\spdlog"]
-	path = Vendor\\spdlog
+[submodule "Vendor/spdlog"]
+	path = Vendor/spdlog
 	url = https://github.com/gabime/spdlog.git

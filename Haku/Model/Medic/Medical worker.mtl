@@ -1,0 +1,294 @@
+newmtl Shoes
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.568627 0.568627 0.568627
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Shoes_diffuse.jpg
+    map_Bump Medical worker/Shoes_bump.png
+    map_Pm Medical worker/Shoes_metallic.png
+    map_Pr Medical worker/Shoes_roughness.png
+newmtl Std_Cornea_L
+    Ns 11.000000
+    d 0.800000
+    Ka 0.196078 0.196078 0.196078
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+    map_Kd Medical worker/Std_Cornea_L_diffuse.jpg
+    map_Pm Medical worker/Std_Cornea_L_metallic.jpg
+    map_Pr Medical worker/Std_Cornea_L_roughness.jpg
+newmtl Std_Cornea_R
+    Ns 11.000000
+    d 0.800000
+    Ka 0.196078 0.196078 0.196078
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+    map_Kd Medical worker/Std_Cornea_R_diffuse.jpg
+    map_Pm Medical worker/Std_Cornea_R_metallic.jpg
+    map_Pr Medical worker/Std_Cornea_R_roughness.jpg
+newmtl Soles
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.568627 0.568627 0.568627
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Soles_diffuse.jpg
+    map_Bump Medical worker/Soles_bump.png
+    map_Pm Medical worker/Soles_metallic.png
+    map_Pr Medical worker/Soles_roughness.png
+newmtl Socks
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.607843 0.607843 0.607843
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Socks_diffuse.jpg
+    map_Bump Medical worker/Socks_bump.png
+    map_Pm Medical worker/Socks_metallic.png
+    map_Pr Medical worker/Socks_roughness.png
+newmtl ShoesTop
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.568627 0.568627 0.568627
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/ShoesTop_diffuse.jpg
+    map_Bump Medical worker/ShoesTop_bump.png
+    map_Pm Medical worker/ShoesTop_metallic.png
+    map_Pr Medical worker/ShoesTop_roughness.png
+newmtl ElasticBand
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.568627 0.568627 0.568627
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/ElasticBand_diffuse.jpg
+    map_Bump Medical worker/ElasticBand_bump.png
+    map_Pm Medical worker/ElasticBand_metallic.png
+    map_Pr Medical worker/ElasticBand_roughness.png
+newmtl Std_Eye_L
+    Ns 20.000000
+    d 1.000000
+    Ka 0.196078 0.196078 0.196078
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.898039 0.898039 0.898039
+    map_Kd Medical worker/Std_Eye_L_diffuse.jpg
+    map_Pm Medical worker/Std_Eye_L_metallic.jpg
+    map_Pr Medical worker/Std_Eye_L_roughness.jpg
+newmtl InnerSoles
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.568627 0.568627 0.568627
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/InnerSoles_diffuse.jpg
+    map_Bump Medical worker/InnerSoles_bump.png
+    map_Pm Medical worker/InnerSoles_metallic.png
+    map_Pr Medical worker/InnerSoles_roughness.png
+newmtl Std_Eye_R
+    Ns 20.000000
+    d 1.000000
+    Ka 0.196078 0.196078 0.196078
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.898039 0.898039 0.898039
+    map_Kd Medical worker/Std_Eye_R_diffuse.jpg
+    map_Pm Medical worker/Std_Eye_R_metallic.jpg
+    map_Pr Medical worker/Std_Eye_R_roughness.jpg
+newmtl Elastic
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 0.752941 0.752941 0.752941
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Elastic_diffuse.jpg
+    map_Bump Medical worker/Elastic_bump.png
+    map_Pm Medical worker/Elastic_metallic.png
+    map_Pr Medical worker/Elastic_roughness.png
+newmtl Scalp_High_polytail
+    Ns 9.999999
+    d 0.000000
+    Ka 0.584314 0.584314 0.584314
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.898039 0.898039 0.898039
+    map_Kd Medical worker/Scalp_High_polytail_diffuse.png
+    map_D Medical worker/Scalp_High_polytail_opacity.jpg
+    map_Bump Medical worker/Scalp_High_polytail_bump.jpg
+    map_Ks Medical worker/Scalp_High_polytail_specular.png
+    map_Pr Medical worker/Scalp_High_polytail_specular.png
+newmtl Std_Tongue
+    Ns 2.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.900000 0.900000 0.900000
+    map_Kd Medical worker/Std_Tongue_diffuse.png
+    map_Pm Medical worker/Std_Tongue_metallic.png
+    map_Pr Medical worker/Std_Tongue_roughness.png
+newmtl Std_Skin_Head
+    Ns 20.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.269400 0.269400 0.269400
+    map_Kd Medical worker/Std_Skin_Head_diffuse.jpg
+    map_Pr Medical worker/Std_Skin_Head_roughness.jpg
+newmtl High_polytail
+    Ns 9.999999
+    d 1.000000
+    Ka 0.584314 0.584314 0.584314
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.898039 0.898039 0.898039
+    map_Kd Medical worker/High_polytail_diffuse.png
+    map_D Medical worker/High_polytail_opacity.jpg
+    map_Bump Medical worker/High_polytail_bump.jpg
+    map_Ks Medical worker/High_polytail_specular.png
+    map_Pr Medical worker/High_polytail_specular.png
+newmtl Std_Skin_Body
+    Ns 20.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.269400 0.269400 0.269400
+newmtl Std_Skin_Arm
+    Ns 20.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.269400 0.269400 0.269400
+newmtl Std_Nails
+    Ns 20.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.269400 0.269400 0.269400
+newmtl Std_Eyelash
+    Ns 2.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.900000 0.900000 0.900000
+    map_Kd Medical worker/Std_Eyelash_diffuse.jpg
+    map_D Medical worker/Std_Eyelash_opacity.jpg
+    map_Pr Medical worker/Std_Eyelash_roughness.jpg
+newmtl Std_Skin_Leg
+    Ns 20.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.269400 0.269400 0.269400
+newmtl Std_Lower_Teeth
+    Ns 2.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 0.882353 0.882353 0.882353
+    Ks 0.900000 0.900000 0.900000
+    map_Kd Medical worker/Std_Lower_Teeth_diffuse.png
+    map_Pm Medical worker/Std_Lower_Teeth_metallic.jpg
+    map_Pr Medical worker/Std_Lower_Teeth_roughness.jpg
+newmtl Std_Upper_Teeth
+    Ns 2.000000
+    d 1.000000
+    Ka 0.490196 0.490196 0.490196
+    Kd 0.882353 0.882353 0.882353
+    Ks 0.900000 0.900000 0.900000
+    map_Kd Medical worker/Std_Upper_Teeth_diffuse.png
+    map_Pm Medical worker/Std_Upper_Teeth_metallic.jpg
+    map_Pr Medical worker/Std_Upper_Teeth_roughness.jpg
+newmtl FABRIC___1___Copy___1_FRONT_4888368
+    Ns 28.763237
+    d 1.000000
+    Ka 0.094786 0.094786 0.094786
+    Kd 0.368627 0.368627 0.368627
+    Ks 0.075000 0.075000 0.075000
+    map_Kd Medical worker/FABRIC___1___Copy___1_FRONT_4888368_diffuse.png
+    map_Pm Medical worker/FABRIC___1___Copy___1_FRONT_4888368_metallic.png
+    map_Pr Medical worker/FABRIC___1___Copy___1_FRONT_4888368_roughness.png
+newmtl Suit_Sides_Mat
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Suit_Sides_Mat_diffuse.jpg
+    map_Bump Medical worker/Suit_Sides_Mat_bump.png
+    map_Pm Medical worker/Suit_Sides_Mat_metallic.png
+    map_Pr Medical worker/Suit_Sides_Mat_roughness.png
+newmtl Gloves___Mat
+    Ns 50.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Gloves___Mat_diffuse.jpg
+    map_Bump Medical worker/Gloves___Mat_bump.png
+    map_Pm Medical worker/Gloves___Mat_metallic.png
+    map_Pr Medical worker/Gloves___Mat_roughness.png
+newmtl Std_Eye_Occlusion_R
+    Ns 1.000000
+    d 1.000000
+    Ka 0.000000 0.000000 0.000000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+    map_Kd Medical worker/Std_Eye_Occlusion_R_diffuse.jpg
+    map_D Medical worker/Std_Eye_Occlusion_R_opacity.jpg
+    map_Pm Medical worker/Std_Eye_Occlusion_R_metallic.jpg
+    map_Pr Medical worker/Std_Eye_Occlusion_R_roughness.jpg
+newmtl Surgical_Face_Mask
+    Ns 2.000000
+    d 1.000000
+    Ka 0.588235 0.588235 0.588235
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.900000 0.900000 0.900000
+    map_Kd Medical worker/Surgical_Face_Mask_diffuse.png
+    map_Bump Medical worker/Surgical_Face_Mask_bump.png
+    map_Pm Medical worker/Surgical_Face_Mask_metallic.png
+    map_Pr Medical worker/Surgical_Face_Mask_roughness.png
+newmtl Std_Tearline_R
+    Ns 1.000000
+    d 1.000000
+    Ka 0.000000 0.000000 0.000000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+    map_Kd Medical worker/Std_Tearline_R_diffuse.jpg
+    map_D Medical worker/Std_Tearline_R_opacity.jpg
+    map_Pm Medical worker/Std_Tearline_R_metallic.jpg
+    map_Pr Medical worker/Std_Tearline_R_roughness.jpg
+newmtl Basic_Suit_Mat
+    Ns 20.000000
+    d 1.000000
+    Ka 0.200000 0.200000 0.200000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.200000 0.200000 0.200000
+    map_Kd Medical worker/Basic_Suit_Mat_diffuse.jpg
+    map_Bump Medical worker/Basic_Suit_Mat_bump.png
+    map_Pm Medical worker/Basic_Suit_Mat_metallic.png
+    map_Pr Medical worker/Basic_Suit_Mat_roughness.png
+newmtl FABRIC___1_FRONT_3416
+    Ns 28.763237
+    d 1.000000
+    Ka 0.257132 0.257132 0.257132
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.075000 0.075000 0.075000
+    map_Kd Medical worker/FABRIC___1_FRONT_3416_diffuse.png
+    map_Pm Medical worker/FABRIC___1___Copy___1_FRONT_4888368_metallic.png
+    map_Pr Medical worker/FABRIC___1___Copy___1_FRONT_4888368_roughness.png
+newmtl Std_Eye_Occlusion_L
+    Ns 1.000000
+    d 1.000000
+    Ka 0.000000 0.000000 0.000000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+    map_Kd Medical worker/Std_Eye_Occlusion_L_diffuse.jpg
+    map_D Medical worker/Std_Eye_Occlusion_L_opacity.jpg
+    map_Pm Medical worker/Std_Eye_Occlusion_L_metallic.jpg
+    map_Pr Medical worker/Std_Eye_Occlusion_L_roughness.jpg
+newmtl Std_Tearline_L
+    Ns 1.000000
+    d 1.000000
+    Ka 0.000000 0.000000 0.000000
+    Kd 1.000000 1.000000 1.000000
+    Ks 0.000000 0.000000 0.000000
+    map_Kd Medical worker/Std_Tearline_L_diffuse.jpg
+    map_D Medical worker/Std_Tearline_R_opacity.jpg
+    map_Pm Medical worker/Std_Tearline_L_metallic.jpg
+    map_Pr Medical worker/Std_Tearline_L_roughness.jpg
