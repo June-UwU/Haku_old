@@ -52,8 +52,8 @@ void AssetManager::ReadModel(const std::string& path, float ThetaZ, float transl
 
 void AssetManager::Draw() noexcept
 {
-	for (int i = 0;i<EntityVector.size();i++)
+	for (Model& m :EntityVector)
 	{
-		EntityVector[i].Bind(GFX->_Device.Get(), GFX->_DeviceContext.Get());
+		m.Bind(GFX->_Device.Get(), GFX->_DeviceContext.Get());
 	}
 }
