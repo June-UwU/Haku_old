@@ -39,7 +39,7 @@ void AssetManager::ReadModel(const std::string& path, float ThetaZ, float transl
 
 	std::vector<int> Indexdata;
 	Indexdata.reserve(static_cast<int64_t>(meshes->mNumFaces) * 3);
-	for (int i = 0; i < meshes->mNumFaces; i++)
+	for (int i = 0; i < meshes->mNumFaces; i++)	
 	{
 		auto& Face = meshes->mFaces[i];
 		Indexdata.push_back(Face.mIndices[0]);
@@ -52,7 +52,7 @@ void AssetManager::ReadModel(const std::string& path, float ThetaZ, float transl
 
 void AssetManager::Draw() noexcept
 {
-	for (Model& m :EntityVector)
+	for (Model& m : EntityVector)
 	{
 		m.Bind(GFX->_Device.Get(), GFX->_DeviceContext.Get());
 	}

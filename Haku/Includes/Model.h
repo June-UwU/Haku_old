@@ -21,8 +21,10 @@ public:
 	void Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext);
 
 private:
-	std::unique_ptr<Haku::VertexBuffer>		   VertexData;
-	std::unique_ptr<Haku::IndexBuffer>		   IndexData;
+	std::unique_ptr<Haku::VertexBuffer>		 VertexData;
+	std::unique_ptr<Haku::IndexBuffer>		 IndexData;
+	std::unique_ptr<Haku::VertexConstBuffer> ConstBufferVertex;
+
 	ConstVertexData							   Matrix;
 	float									   ClientWidth;
 	float									   ClientHeight;

@@ -41,8 +41,9 @@ private:
 class VertexConstBuffer : public Buffer
 {
 public:
-	VertexConstBuffer(){};
+	VertexConstBuffer(ID3D11Device* Device,const float ClientWidth,const float ClientHeight);
 	virtual void Bind(ID3D11DeviceContext* DeviceContext) override;
+	void UpdateParameters(ConstVertexModifer& Reference) noexcept;
 private:
 };
 } // namespace Haku

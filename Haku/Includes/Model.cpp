@@ -14,6 +14,7 @@ Model::Model(
 {
 	VertexData = std::make_unique<Haku::VertexBuffer>(std::move(Vertex),Device);
 	IndexData = std::make_unique<Haku::IndexBuffer>(std::move(Index),Device);
+	ConstBufferVertex = std::make_unique<Haku::VertexConstBuffer>(Device,ClientWidth,ClientHeight);
 	char FilePath[256];
 	GetModuleFileNameA(nullptr, FilePath, std::size(FilePath));
 	std::filesystem::path Exe(FilePath);
@@ -59,21 +60,7 @@ Model::Model(
 	D3D11_INPUT_ELEMENT_DESC VertexInputDesc[]{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-
-	Matrix = { DirectX::XMMatrixTranspose(
-		DirectX::XMMatrixTranslation(0.0f, 0.0f, 4.0f) * DirectX::XMMatrixScaling(2.0f, 2.0f, 2.0f) *
-		DirectX::XMMatrixPerspectiveFovLH(90, ClientWidth / ClientHeight, 0.5f, 100.0f)) };
-	D3D11_BUFFER_DESC ConstantBuffer{};
-	ConstantBuffer.ByteWidth	  = sizeof(Matrix);
-	ConstantBuffer.Usage		  = D3D11_USAGE_DYNAMIC;
-	ConstantBuffer.BindFlags	  = D3D11_BIND_CONSTANT_BUFFER;
-	ConstantBuffer.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-	D3D11_SUBRESOURCE_DATA ConstantSubResource{};
-	ConstantSubResource.pSysMem = &Matrix;
-
-	EXCEPT_HR_THROW(Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, RotationMatrix.GetAddressOf()))
-	/*---------------*/
+	
 
 	EXCEPT_HR_THROW(Device->CreateInputLayout(
 		VertexInputDesc,
@@ -87,9 +74,10 @@ void Model::Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
 {
 	VertexData->Bind(DeviceContext);
 	IndexData->Bind(DeviceContext);
+	ConstBufferVertex->Bind(DeviceContext);
+
 	DeviceContext->VSSetShader(VertexShader.Get(), 0, 0);
 	DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
-	DeviceContext->VSSetConstantBuffers(0u, 1u, RotationMatrix.GetAddressOf());
 	DeviceContext->IASetInputLayout(InputLayout.Get());
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
