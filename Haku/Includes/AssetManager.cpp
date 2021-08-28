@@ -59,8 +59,8 @@ void AssetManager::Draw() noexcept
 		m.YTranslation(TestData.YTrans);
 		m.ZTranslation(TestData.ZTrans);
 		m.XRotate(TestData.XRotate);
-		m.XRotate(TestData.YRotate);
-		m.XRotate(TestData.ZRotate);
+		m.YRotate(TestData.YRotate);
+		m.ZRotate(TestData.ZRotate);
 
 		m.Bind(GFX->_Device.Get(), GFX->_DeviceContext.Get());
 	}

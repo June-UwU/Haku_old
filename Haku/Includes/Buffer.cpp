@@ -80,11 +80,12 @@ void VertexConstBuffer::Bind(ID3D11DeviceContext* DeviceContext)
 void VertexConstBuffer::UpdateParameters(ID3D11DeviceContext* DeviceContext, ConstVertexModifer* Reference) noexcept
 {
 	D3D11_MAPPED_SUBRESOURCE SubResource{};
-	EXCEPT_HR_THROW(DeviceContext->Map(DataBuffer.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0, &SubResource))
+	memset(&SubResource,0,sizeof(SubResource));
+	EXCEPT_HR_THROW(DeviceContext->Map(DataBuffer.Get(), 0u, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource))
 	DirectX::XMMATRIX Matrix = DirectX::XMMatrixTranspose(
 		DirectX::XMMatrixRotationX(Reference->XRotate) * DirectX::XMMatrixRotationY(Reference->YRotate) *
 		DirectX::XMMatrixRotationZ(Reference->ZRotate) *
-		DirectX::XMMatrixTranslation(Reference->XTrans, 4.0f + Reference->YTrans, Reference->ZTrans) *
+		DirectX::XMMatrixTranslation(Reference->XTrans, Reference->YTrans, 4.0f + Reference->ZTrans) *
 		DirectX::XMMatrixPerspectiveFovLH(90, ClientWidth / ClientHeight, 0.5f, 100.0f));
 	memcpy(SubResource.pData, &Matrix, sizeof(Matrix));
 	DeviceContext->Unmap(DataBuffer.Get(), 0u);

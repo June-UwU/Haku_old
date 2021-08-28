@@ -22,15 +22,15 @@ void Application::Run()
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		if (AppWindow.Mouse.LeftDown)
 		{
-			TestModifier.XRotate += 0.5f;
+			TestModifier.XRotate += 0.1f;
 		}
 		if (AppWindow.KeyBoard.CheckKeyDown(VK_UP))
 		{
-			TestModifier.ZTrans += 0.5f;
+			TestModifier.ZTrans += 0.1f;
 		}
 		if (AppWindow.KeyBoard.CheckKeyDown(VK_DOWN))
 		{
-			TestModifier.ZTrans -= 0.5f;	
+			TestModifier.ZTrans -= 0.1f;	
 		}
 		Manager.UpdateTestData(TestModifier);
 		AppWindow.SetTrigger();
