@@ -9,10 +9,14 @@ public:
 	AssetManager();
 	AssetManager(Graphics* GFX);
 	void SetGraphics(Graphics* Pointer) noexcept;
-	void ReadModel(const std::string& path, float ThetaZ, float translation);
+	void ReadModel(const std::string& path);
 	void Draw() noexcept;
+
+	void UpdateTestData(ConstVertexModifer& Ref) noexcept;
 
 private:
 	Graphics*		   GFX = nullptr;
 	std::vector<Model> EntityVector;
+
+	ConstVertexModifer TestData;
 };

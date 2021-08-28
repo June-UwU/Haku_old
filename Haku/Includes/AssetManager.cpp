@@ -7,6 +7,7 @@
 
 AssetManager::AssetManager()
 	: GFX(nullptr)
+	, TestData{}
 {
 }
 
@@ -20,7 +21,7 @@ void AssetManager::SetGraphics(Graphics* Pointer) noexcept
 	GFX = Pointer;
 }
 
-void AssetManager::ReadModel(const std::string& path, float ThetaZ, float translation)
+void AssetManager::ReadModel(const std::string& path)
 {
 	const auto		 DeviceContext = GFX->_DeviceContext.Get();
 	const auto		 Device		   = GFX->_Device.Get();
@@ -39,7 +40,7 @@ void AssetManager::ReadModel(const std::string& path, float ThetaZ, float transl
 
 	std::vector<int> Indexdata;
 	Indexdata.reserve(static_cast<int64_t>(meshes->mNumFaces) * 3);
-	for (int i = 0; i < meshes->mNumFaces; i++)	
+	for (int i = 0; i < meshes->mNumFaces; i++)
 	{
 		auto& Face = meshes->mFaces[i];
 		Indexdata.push_back(Face.mIndices[0]);
@@ -54,6 +55,26 @@ void AssetManager::Draw() noexcept
 {
 	for (Model& m : EntityVector)
 	{
+		m.XTranslation(TestData.XTrans);
+		m.YTranslation(TestData.YTrans);
+		m.ZTranslation(TestData.ZTrans);
+		m.XRotate(TestData.XRotate);
+		m.XRotate(TestData.YRotate);
+		m.XRotate(TestData.ZRotate);
+
 		m.Bind(GFX->_Device.Get(), GFX->_DeviceContext.Get());
 	}
+}
+
+void AssetManager::UpdateTestData(ConstVertexModifer& Ref) noexcept
+{
+	TestData.XTrans	 = Ref.XTrans;
+	TestData.YTrans	 = Ref.YTrans;
+	TestData.ZTrans	 = Ref.ZTrans;
+	TestData.XPos	 = Ref.XPos;
+	TestData.YPos	 = Ref.YPos;
+	TestData.ZPos	 = Ref.ZPos;
+	TestData.XRotate = Ref.XRotate;
+	TestData.YRotate = Ref.YRotate;
+	TestData.ZRotate = Ref.ZRotate;
 }

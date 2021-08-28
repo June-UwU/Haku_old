@@ -14,6 +14,7 @@ public:
 private:
 	Window AppWindow;
 	AssetManager Manager;
-	float  Rotate  = 0.0f;
-	float  ZBuffer = 0.9f;
+
+
+	ConstVertexModifer TestModifier{};
 };

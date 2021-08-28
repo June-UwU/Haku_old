@@ -11,7 +11,7 @@ void Application::Run()
 	//std::filesystem::path ModelPath(Exe / "../../Model/Medic/Medical worker.obj");
 	std::filesystem::path ModelPath(Exe / "../../Model/suzanne.obj");
 	std::string path = ModelPath.string();
-	Manager.ReadModel(path,Rotate,ZBuffer);
+	Manager.ReadModel(path);
 	while (AppWindow.HandleMessages())
 	{
 		// Clearing The back buffer on each cycle of event,apparently clearing doesn't present the damn frame..
@@ -22,16 +22,17 @@ void Application::Run()
 		AppWindow.Gfx().PresentSwapChainBuffer();
 		if (AppWindow.Mouse.LeftDown)
 		{
-			Rotate += 0.01f;
+			TestModifier.XRotate += 0.5f;
 		}
 		if (AppWindow.KeyBoard.CheckKeyDown(VK_UP))
 		{
-			ZBuffer += 0.1f;
+			TestModifier.ZTrans += 0.5f;
 		}
 		if (AppWindow.KeyBoard.CheckKeyDown(VK_DOWN))
 		{
-			ZBuffer -= 0.1f;
+			TestModifier.ZTrans -= 0.5f;	
 		}
+		Manager.UpdateTestData(TestModifier);
 		AppWindow.SetTrigger();
 	}
 }
