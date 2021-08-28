@@ -19,13 +19,19 @@ public:
 		std::vector<int>&&	 Index,
 		std::vector<Point>&& Vertex);
 	void Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext);
+	void XTranslation(float Value) noexcept;
+	void YTranslation(float Value) noexcept;
+	void ZTranslation(float Value) noexcept;
+	void XRotate(float Value) noexcept;
+	void YRotate(float Value) noexcept;
+	void ZRotate(float Value) noexcept;
 
 private:
 	std::unique_ptr<Haku::VertexBuffer>		 VertexData;
 	std::unique_ptr<Haku::IndexBuffer>		 IndexData;
 	std::unique_ptr<Haku::VertexConstBuffer> ConstBufferVertex;
+	ConstVertexModifer						 ModelData;
 
-	ConstVertexData							   Matrix;
 	float									   ClientWidth;
 	float									   ClientHeight;
 	Microsoft::WRL::ComPtr<ID3D11Buffer>	   RotationMatrix;

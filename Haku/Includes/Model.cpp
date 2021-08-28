@@ -11,6 +11,7 @@ Model::Model(
 	std::vector<Point>&& Vertex)
 	: ClientHeight(801.0f)
 	, ClientWidth(1536.0f)
+	,ModelData{}
 {
 	VertexData = std::make_unique<Haku::VertexBuffer>(std::move(Vertex),Device);
 	IndexData = std::make_unique<Haku::IndexBuffer>(std::move(Index),Device);
@@ -74,8 +75,8 @@ void Model::Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
 {
 	VertexData->Bind(DeviceContext);
 	IndexData->Bind(DeviceContext);
+	ConstBufferVertex->UpdateParameters(DeviceContext,&ModelData);
 	ConstBufferVertex->Bind(DeviceContext);
-
 	DeviceContext->VSSetShader(VertexShader.Get(), 0, 0);
 	DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
 	DeviceContext->IASetInputLayout(InputLayout.Get());
@@ -90,4 +91,34 @@ void Model::Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
 	vp.TopLeftY = 0;
 	DeviceContext->RSSetViewports(1u, &vp);
 	DeviceContext->DrawIndexed(IndexData->GetIndicesNo(), 0, 0);
+}
+
+void Model::XTranslation(float Value) noexcept
+{
+	ModelData.XTrans = Value;
+}
+
+void Model::YTranslation(float Value) noexcept
+{
+	ModelData.YTrans = Value;
+}
+
+void Model::ZTranslation(float Value) noexcept
+{
+	ModelData.ZTrans = Value;
+}
+
+void Model::XRotate(float Value) noexcept
+{
+	ModelData.XRotate = Value;
+}
+
+void Model::YRotate(float Value) noexcept
+{
+	ModelData.YRotate = Value;
+}
+
+void Model::ZRotate(float Value) noexcept
+{
+	ModelData.ZRotate = Value;
 }
