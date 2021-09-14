@@ -52,7 +52,7 @@ void VertexConstBuffer::Bind(ID3D11DeviceContext* DeviceContext)
 	DeviceContext->VSSetConstantBuffers(0u, 1u, DataBuffer.GetAddressOf());
 }
 
-void VertexConstBuffer::UpdateParameters(ID3D11DeviceContext* DeviceContext, ConstVertexModifer* Reference) noexcept
+void VertexConstBuffer::UpdateParameters(ID3D11DeviceContext* DeviceContext, ConstVertexModifer* Reference) 
 {
 	D3D11_MAPPED_SUBRESOURCE SubResource{};
 	memset(&SubResource,0,sizeof(SubResource));

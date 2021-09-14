@@ -16,9 +16,10 @@ struct ConstVertexModifer
 
 struct LightingConst
 {
-	DirectX::XMFLOAT3 AmbientSource;
-	DirectX::XMFLOAT3 Diffuse;
 	DirectX::XMFLOAT3 Position;
+	DirectX::XMFLOAT3 AmbientSource;
+	DirectX::XMFLOAT3 DiffuseSource;
+	float DiffuseIntensity;
 	float AttenConst;
 	float AttenLinear;
 	float AttenQuad;

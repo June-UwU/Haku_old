@@ -17,8 +17,14 @@ public:
 		ID3D11Device*		 Device,
 		ID3D11DeviceContext* DeviceContext,
 		std::vector<int>&&	 Index,
-		std::vector<Point>&& Vertex);
+		std::vector<Point>&& Vertex,
+		float				 ClientWidth,
+		float				 ClientHeight);
 	void Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext);
+	const int GetIndexSize() noexcept
+	{
+		return IndexData->GetIndicesNo();
+	}
 	void XTranslation(float Value) noexcept;
 	void YTranslation(float Value) noexcept;
 	void ZTranslation(float Value) noexcept;
@@ -27,10 +33,10 @@ public:
 	void ZRotate(float Value) noexcept;
 
 private:
-	std::unique_ptr<Haku::VertexBuffer<Point>>		 VertexData;
-	std::unique_ptr<Haku::IndexBuffer>		 IndexData;
-	std::unique_ptr<Haku::VertexConstBuffer> ConstBufferVertex;
-	ConstVertexModifer						 ModelData;
+	std::unique_ptr<Haku::VertexBuffer<Point>> VertexData;
+	std::unique_ptr<Haku::IndexBuffer>		   IndexData;
+	std::unique_ptr<Haku::VertexConstBuffer>   ConstBufferVertex;
+	ConstVertexModifer						   ModelData;
 
 	float									   ClientWidth;
 	float									   ClientHeight;

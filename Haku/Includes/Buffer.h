@@ -63,7 +63,7 @@ class VertexConstBuffer : public Buffer
 public:
 	VertexConstBuffer(ID3D11Device* Device, const float ClientWidth, const float ClientHeight);
 	virtual void Bind(ID3D11DeviceContext* DeviceContext) override;
-	void		 UpdateParameters(ID3D11DeviceContext* DeviceContext, ConstVertexModifer* Reference) noexcept;
+	void		 UpdateParameters(ID3D11DeviceContext* DeviceContext, ConstVertexModifer* Reference);
 
 private:
 	float ClientHeight;
@@ -82,7 +82,7 @@ public:
 		ConstantBuffer.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 		D3D11_SUBRESOURCE_DATA ConstantSubResource{};
-		ConstantSubResource.pSysMem = Param;
+		ConstantSubResource.pSysMem = &Param;
 
 		EXCEPT_HR_THROW(Device->CreateBuffer(&ConstantBuffer, &ConstantSubResource, DataBuffer.GetAddressOf()))
 	}
