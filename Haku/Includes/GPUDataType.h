@@ -14,6 +14,17 @@ struct ConstVertexModifer
 	float ZRotate;
 };
 
+struct LightingConst
+{
+	DirectX::XMFLOAT3 AmbientSource;
+	DirectX::XMFLOAT3 Diffuse;
+	DirectX::XMFLOAT3 Position;
+	float AttenConst;
+	float AttenLinear;
+	float AttenQuad;
+};
+
+
 struct Point
 {
 	DirectX::XMFLOAT3 Pos;

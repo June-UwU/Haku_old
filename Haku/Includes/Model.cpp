@@ -13,7 +13,7 @@ Model::Model(
 	, ClientWidth(1536.0f)
 	,ModelData{}
 {
-	VertexData = std::make_unique<Haku::VertexBuffer>(std::move(Vertex),Device);
+	VertexData = std::make_unique<Haku::VertexBuffer<Point>>(std::move(Vertex),Device);
 	IndexData = std::make_unique<Haku::IndexBuffer>(std::move(Index),Device);
 	ConstBufferVertex = std::make_unique<Haku::VertexConstBuffer>(Device,ClientWidth,ClientHeight);
 	char FilePath[256];

@@ -27,14 +27,13 @@ public:
 	void ZRotate(float Value) noexcept;
 
 private:
-	std::unique_ptr<Haku::VertexBuffer>		 VertexData;
+	std::unique_ptr<Haku::VertexBuffer<Point>>		 VertexData;
 	std::unique_ptr<Haku::IndexBuffer>		 IndexData;
 	std::unique_ptr<Haku::VertexConstBuffer> ConstBufferVertex;
 	ConstVertexModifer						 ModelData;
 
 	float									   ClientWidth;
 	float									   ClientHeight;
-	Microsoft::WRL::ComPtr<ID3D11Buffer>	   RotationMatrix;
 	Microsoft::WRL::ComPtr<ID3DBlob>		   ErrorBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob>		   VertexBlob;
 	Microsoft::WRL::ComPtr<ID3DBlob>		   PixelBlob;

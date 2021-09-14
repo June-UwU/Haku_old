@@ -104,8 +104,7 @@ void log_err(Type& arg1, Types... arg2) noexcept
 	log_out_err(msg);
 }
 
-#endif
-#ifndef _DEBUG
+#elif _DEBUG
 #define HAKU_CONSOLE_INIT
 
 #define HAKU_LOG_INFO(...)
