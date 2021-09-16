@@ -96,14 +96,6 @@ void AssetManager::Draw() noexcept
 {
 	ID3D11Device*		 Device		   = GFX->_Device.Get();
 	ID3D11DeviceContext* DeviceContext = GFX->_DeviceContext.Get();
-	D3D11_VIEWPORT		 vp;
-	vp.Width	= GFX->ClientWidth;
-	vp.Height	= GFX->ClientHeight;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	DeviceContext->RSSetViewports(1u, &vp);
 	if (LightPointer)
 	{
 		LightPointer->Bind(GFX->_DeviceContext.Get());

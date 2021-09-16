@@ -12,6 +12,7 @@ void Application::Run()
 	std::filesystem::path ModelPath(Exe / "../../Model/suzanne.obj");
 	std::string path = ModelPath.string();
 	Manager.ReadModel(path);
+	AppWindow.Gfx().SetViewPorts();
 	while (AppWindow.HandleMessages())
 	{
 		// Clearing The back buffer on each cycle of event,apparently clearing doesn't present the damn frame..

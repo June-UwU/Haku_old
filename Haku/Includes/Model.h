@@ -8,8 +8,6 @@
 #include <d3dcompiler.h>
 #include <vector>
 
-class Graphics;
-
 class Model
 {
 public:
@@ -20,30 +18,18 @@ public:
 		std::vector<Point>&& Vertex,
 		float				 ClientWidth,
 		float				 ClientHeight);
-	void Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext);
-	const int GetIndexSize() noexcept
-	{
-		return IndexData->GetIndicesNo();
-	}
-	void XTranslation(float Value) noexcept;
-	void YTranslation(float Value) noexcept;
-	void ZTranslation(float Value) noexcept;
-	void XRotate(float Value) noexcept;
-	void YRotate(float Value) noexcept;
-	void ZRotate(float Value) noexcept;
+	void	  Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext);
+	const int GetIndexSize() noexcept { return IndexData->GetIndicesNo(); }
+	void	  XTranslation(float Value) noexcept;
+	void	  YTranslation(float Value) noexcept;
+	void	  ZTranslation(float Value) noexcept;
+	void	  XRotate(float Value) noexcept;
+	void	  YRotate(float Value) noexcept;
+	void	  ZRotate(float Value) noexcept;
 
 private:
 	std::unique_ptr<Haku::VertexBuffer<Point>> VertexData;
 	std::unique_ptr<Haku::IndexBuffer>		   IndexData;
 	std::unique_ptr<Haku::VertexConstBuffer>   ConstBufferVertex;
 	ConstVertexModifer						   ModelData;
-
-	float									   ClientWidth;
-	float									   ClientHeight;
-	Microsoft::WRL::ComPtr<ID3DBlob>		   ErrorBlob;
-	Microsoft::WRL::ComPtr<ID3DBlob>		   VertexBlob;
-	Microsoft::WRL::ComPtr<ID3DBlob>		   PixelBlob;
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> VertexShader;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader>  PixelShader;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout>  InputLayout;
 };

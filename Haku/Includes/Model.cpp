@@ -11,9 +11,7 @@ Model::Model(
 	std::vector<Point>&& Vertex,
 	float				 ClientWidth,
 	float				 ClientHeight)
-	: ClientHeight(ClientHeight)
-	, ClientWidth(ClientWidth)
-	, ModelData{}
+	: ModelData{}
 {
 	VertexData		  = std::make_unique<Haku::VertexBuffer<Point>>(std::move(Vertex), Device);
 	IndexData		  = std::make_unique<Haku::IndexBuffer>(std::move(Index), Device);
@@ -25,49 +23,6 @@ Model::Model(
 	const std::filesystem::path VertexShaderPath(Exe / "../../Shaders/VertexShader1.hlsl");
 	const std::filesystem::path PixelShaderPath(Exe / "../../Shaders/PixelShader1.hlsl");
 
-	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined(DEBUG) || defined(_DEBUG)
-	flags |= D3DCOMPILE_DEBUG;
-#endif
-
-	// Men, shader isn't part of the model
-	EXCEPT_HR_THROW(D3DCompileFromFile(
-		VertexShaderPath.wstring().c_str(),
-		NULL,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main",
-		"vs_5_0",
-		flags,
-		NULL,
-		VertexBlob.GetAddressOf(),
-		ErrorBlob.GetAddressOf()))
-
-	EXCEPT_HR_THROW(D3DCompileFromFile(
-		PixelShaderPath.wstring().c_str(),
-		NULL,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		"main",
-		"ps_5_0",
-		flags,
-		NULL,
-		PixelBlob.GetAddressOf(),
-		ErrorBlob.GetAddressOf()))
-
-	EXCEPT_HR_THROW(Device->CreateVertexShader(
-		VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf()))
-	EXCEPT_HR_THROW(Device->CreatePixelShader(
-		PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf()))
-
-	D3D11_INPUT_ELEMENT_DESC VertexInputDesc[]{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-
-	EXCEPT_HR_THROW(Device->CreateInputLayout(
-		VertexInputDesc,
-		std::size(VertexInputDesc),
-		VertexBlob->GetBufferPointer(),
-		VertexBlob->GetBufferSize(),
-		InputLayout.GetAddressOf()))
 }
 
 void Model::Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
@@ -76,9 +31,6 @@ void Model::Bind(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
 	IndexData->Bind(DeviceContext);
 	ConstBufferVertex->UpdateParameters(DeviceContext, &ModelData);
 	ConstBufferVertex->Bind(DeviceContext);
-	DeviceContext->VSSetShader(VertexShader.Get(), 0, 0);
-	DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
-	DeviceContext->IASetInputLayout(InputLayout.Get());
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 

@@ -118,9 +118,7 @@ Graphics::Graphics(HWND Handle)
 
 	// Create the depth stencil view
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateDepthStencilView(
-		_DepthStencilBuffer.Get(),
-		&DepthStenciViewDesc,
-		_DepthStencilView.GetAddressOf()))
+		_DepthStencilBuffer.Get(), &DepthStenciViewDesc, _DepthStencilView.GetAddressOf()))
 
 	// Bind the depth stencil view
 	_DeviceContext->OMSetRenderTargets(1, _RenderTarget.GetAddressOf(), _DepthStencilView.Get());
@@ -198,15 +196,9 @@ void Graphics::Tinkering(float ThetaZ, float Translation)
 		ErrorBlob.GetAddressOf()))
 
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreateVertexShader(
-		VertexBlob->GetBufferPointer(),
-		VertexBlob->GetBufferSize(),
-		nullptr,
-		VertexShader.GetAddressOf()))
+		VertexBlob->GetBufferPointer(), VertexBlob->GetBufferSize(), nullptr, VertexShader.GetAddressOf()))
 	HAKU_INFO_QUEUE_CHECK_DUMP(_Device->CreatePixelShader(
-		PixelBlob->GetBufferPointer(),
-		PixelBlob->GetBufferSize(),
-		nullptr,
-		PixelShader.GetAddressOf()))
+		PixelBlob->GetBufferPointer(), PixelBlob->GetBufferSize(), nullptr, PixelShader.GetAddressOf()))
 
 	_DeviceContext->VSSetShader(VertexShader.Get(), 0, 0);
 	_DeviceContext->PSSetShader(PixelShader.Get(), 0, 0);
@@ -316,7 +308,6 @@ void Graphics::Tinkering(float ThetaZ, float Translation)
 
 	_DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-
 	DXGI_SWAP_CHAIN_DESC Temp{};
 	_SwapChain->GetDesc(&Temp);
 	D3D11_VIEWPORT vp;
@@ -328,4 +319,16 @@ void Graphics::Tinkering(float ThetaZ, float Translation)
 	vp.TopLeftY = 0;
 	_DeviceContext->RSSetViewports(1u, &vp);
 	_DeviceContext->DrawIndexed(std::size(Index), 0, 0);
+}
+
+void Graphics::SetViewPorts() noexcept
+{
+	D3D11_VIEWPORT vp;
+	vp.Width	= ClientWidth;
+	vp.Height	= ClientHeight;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	_DeviceContext->RSSetViewports(1u, &vp);
 }

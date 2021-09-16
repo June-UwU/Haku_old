@@ -9,6 +9,7 @@
 class Graphics
 {
 	friend class AssetManager;
+
 public:
 	Graphics(HWND handle);
 	Graphics(Graphics& rhs) = delete;
@@ -18,9 +19,10 @@ public:
 	void	 OnWindowResize(HWND Handle);
 	void	 PresentSwapChainBuffer();
 	void	 Tinkering(float ThetaZ, float Translation);
+	void	 SetViewPorts() noexcept;
+	float	 ClientHeight;
+	float	 ClientWidth;
 
-	float ClientHeight;
-	float ClientWidth;
 private:
 #ifdef _DEBUG
 	Microsoft::WRL::ComPtr<ID3D11Debug> _Debugger;
